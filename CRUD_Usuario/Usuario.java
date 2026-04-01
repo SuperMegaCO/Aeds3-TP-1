@@ -85,7 +85,6 @@ public class Usuario implements Registro {
         ByteArrayInputStream bais = new ByteArrayInputStream(b);
         DataInputStream dis = new DataInputStream(bais);
 
-        byte[] cpf = new byte[11];
         this.id = dis.readInt();
         this.nome = dis.readUTF();
         this.email = dis.readUTF();
