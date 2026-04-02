@@ -1,31 +1,30 @@
+package CRUD_Usuario;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-public class ParCPFID implements aed3.RegistroHashExtensivel<ParCPFID> {
+import aed3.RegistroHashExtensivel;
+
+public class ParEmailID implements aed3.RegistroHashExtensivel<ParEmailID> {
     
-    private String cpf; // chave
+    private String Email; // chave
     private int id;     // valor
     private final short TAMANHO = 15;  // tamanho em bytes
 
-    public ParCPFID() {
-        this.cpf = "00000000000";
+    public ParEmailID() {
+        this.Email = "00000000000";
         this.id = -1;
     }
 
-    public ParCPFID(String cpf, int id) throws Exception {
-        // Certifique-se de que o CPF contém exatamente 11 dígitos
-        if (cpf.length() != 11 || !cpf.matches("\\d{11}")) {
-            throw new IllegalArgumentException("CPF deve conter exatamente 11 dígitos numéricos.");
-        }
-        this.cpf = cpf;
+    public ParEmailID(String Email, int id) throws Exception {
+        this.Email = Email;
         this.id = id;
     }
 
-    public String getCpf() {
-        return cpf;
+    public String getEmail() {
+        return Email;
     }
 
     public int getId() {
@@ -35,7 +34,7 @@ public class ParCPFID implements aed3.RegistroHashExtensivel<ParCPFID> {
  
     @Override
     public int hashCode() {
-        return hash(this.cpf);
+        return hash(this.Email);
     }
 
     public short size() {
@@ -43,13 +42,13 @@ public class ParCPFID implements aed3.RegistroHashExtensivel<ParCPFID> {
     }
 
     public String toString() {
-        return "("+this.cpf + ";" + this.id+")";
+        return "("+this.Email + ";" + this.id+")";
     }
 
     public byte[] toByteArray() throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
-        dos.write(this.cpf.getBytes());
+        dos.write(this.Email.getBytes());
         dos.writeInt(this.id);
         return baos.toByteArray();
     }
@@ -59,21 +58,16 @@ public class ParCPFID implements aed3.RegistroHashExtensivel<ParCPFID> {
         DataInputStream dis = new DataInputStream(bais);
         byte[] b = new byte[11];
         dis.read(b);
-        this.cpf = new String(b);
+        this.Email = new String(b);
         this.id = dis.readInt();
     }
 
-    public static int hash(String cpf) throws IllegalArgumentException {
-        // Certifique-se de que o CPF contém exatamente 11 dígitos
-        if (cpf.length() != 11 || !cpf.matches("\\d{11}")) {
-            throw new IllegalArgumentException("CPF deve conter exatamente 11 dígitos numéricos.");
-        }
-
-        // Converter o CPF para um número inteiro longo
-        long cpfLong = Long.parseLong(cpf);
+    public static int hash(String Email) throws IllegalArgumentException {
+        // Certifique-se de que o Email contém exatamente 11 dígitos
+        long EmailLong = Long.parseLong(Email);
 
         // Aplicar uma função de hash usando um número primo grande
-        int hashValue = (int) (cpfLong % (int)(1e9 + 7));
+        int hashValue = (int) (EmailLong % (int)(1e9 + 7));
 
         // Retornar um valor positivo
         return Math.abs(hashValue);
