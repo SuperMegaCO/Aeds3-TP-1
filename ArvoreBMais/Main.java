@@ -52,9 +52,9 @@ public class Main {
             System.out.println("\nINCLUSÃO");
             int n1 = 0, n2 = 0;
             try {
-              System.out.print("Num1: ");
+              System.out.print("ID usuario: ");
               n1 = Integer.valueOf(console.nextLine());
-              System.out.print("Num2: ");
+              System.out.print("ID curso: ");
               n2 = Integer.valueOf(console.nextLine());
             } catch (Exception e) {
               System.out.println("Não é um número!");
@@ -66,9 +66,9 @@ public class Main {
             break;
           case 2: {
             System.out.println("\nBUSCA");
-            System.out.print("Num1: ");
+            System.out.print("ID usuario: ");
             int n1 = Integer.valueOf(console.nextLine());
-            // Ao passar o segundo valor como -1, ele funciona como um coringa
+            // Ao passar o segundoID curso: como -1, ele funciona como um coringa
             // de acordo com a implementação do método compareTo na classe
             // ParIntInt
             ArrayList<ParIntInt> lista = arvore.read(new ParIntInt(n1, -1));
@@ -78,14 +78,14 @@ public class Main {
             // ArrayList<ParIntInt> lista = arvore.read(new ParIntInt(n1, n2));
             System.out.print("Resposta: ");
             for (int i = 0; i < lista.size(); i++)
-              System.out.print(lista.get(i) + " ");
+              System.out.print(lista.get(i).getNum2() + " ");
           }
             break;
           case 3: {
             System.out.println("\nEXCLUSÃO");
-            System.out.print("Num1: ");
+            System.out.print("ID usuario: ");
             int n1 = Integer.valueOf(console.nextLine());
-            System.out.print("Num2: ");
+            System.out.print("ID curso: ");
             int n2 = Integer.valueOf(console.nextLine());
             arvore.delete(new ParIntInt(n1, n2));
             arvore.print();

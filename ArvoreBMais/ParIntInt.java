@@ -39,6 +39,14 @@ public class ParIntInt implements aed3.RegistroArvoreBMais<ParIntInt> {
     }
   }
 
+   public int getNum1() {
+    return num1;
+  }
+
+  public int getNum2() {
+    return num2;
+  }
+
   @Override
   public ParIntInt clone() {
     return new ParIntInt(this.num1, this.num2);
