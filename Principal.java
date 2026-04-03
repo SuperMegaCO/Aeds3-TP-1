@@ -1,15 +1,17 @@
 import java.util.Scanner;
 
+import Controle.ControleUsuario;
+
 
 public class Principal {
 
 public static void main(String[] args) {
 
     Scanner console;
-
+    int currentUserId;
     try {
         console = new Scanner(System.in);
-        int opcao;
+        char opcao;
         do {
 
             System.out.println("\n\nAEDsIII TP1 1:N");
@@ -21,24 +23,24 @@ public static void main(String[] args) {
 
             System.out.print("\nOpção: ");
             try {
-                opcao = Integer.valueOf(console.nextLine());
+                opcao = console.nextLine().charAt(0);
             } catch(NumberFormatException e) {
-                opcao = -1;
+                opcao = ' ';
             }
 
             switch (opcao) {
-                case 1:
-                    (new MenuClientes()).menu();
+                case 'A':
+                    (new ).menu();
                     break;
-                case 0:
+                case 'B':
+                    currentUserId = (new ControleUsuario()).NewUserMenu();
                     break;
                 default:
                     System.out.println("Opção inválida!");
                     break;
             }
 
-        } while (opcao != 0);
-
+        } while (opcao != 'S');
 
 
     } catch(Exception e) {
