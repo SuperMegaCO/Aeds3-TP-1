@@ -26,16 +26,16 @@ public class ArquivoUsuario extends aed3.Arquivo<Usuario> {
     }
 
     public Usuario read(String Email) throws Exception {
-        ParEmailID pci = indiceIndiretoEmail.read(ParEmailID.hash(Email));
-        if(pci == null)
+        ParEmailID pei = indiceIndiretoEmail.read(ParEmailID.hash(Email));
+        if(pei == null)
             return null;
-        return read(pci.getId());
+        return read(pei.getId());
     }
     
     public boolean delete(String Email) throws Exception {
-        ParEmailID pci = indiceIndiretoEmail.read(ParEmailID.hash(Email));
-        if(pci != null) 
-            if(delete(pci.getId())) 
+        ParEmailID pei = indiceIndiretoEmail.read(ParEmailID.hash(Email));
+        if(pei != null) 
+            if(delete(pei.getId())) 
                 return indiceIndiretoEmail.delete(ParEmailID.hash(Email));
         return false;
     }

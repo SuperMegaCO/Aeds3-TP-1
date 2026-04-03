@@ -30,7 +30,7 @@ public static void main(String[] args) {
 
             switch (opcao) {
                 case 'A':
-                    (new ).menu();
+                    currentUserId = (new ControleUsuario()).Login();
                     break;
                 case 'B':
                     currentUserId = (new ControleUsuario()).NewUserMenu();

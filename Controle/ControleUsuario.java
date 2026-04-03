@@ -6,7 +6,7 @@ import CRUD_Usuario.ArquivoUsuario;
 import Visao.VisaoUsuario.*;
 public class ControleUsuario {
     ArquivoUsuario arqUsuarios;
-    VisaoUsuario visUsuario;
+    VisaoUsuario visUsuario = new VisaoUsuario();
     private static Scanner console = new Scanner(System.in);
 
     public ControleUsuario() throws Exception {
@@ -24,27 +24,34 @@ public class ControleUsuario {
         catch(Exception e) {
             
             System.out.println("Erro em salvar o usuario novo.");
+            e.printStackTrace();
             return -1;
         }
 
     }
-    public void Login() {
-        Usuario tempUsr;
+    public int Login() {
+        LoginInfo logInf;
+        Usuario tempUsr = null;
         System.out.println("\n\nAEDsIII TP1 1:N");
         System.out.println("-------");
         System.out.println("> Inicio > Login");
         do {
-            LoginInfo logInf = visUsuario.Login();
+           logInf = visUsuario.Login();
         try {
             tempUsr = arqUsuarios.read(logInf.Email);
+            if (tempUsr.getHashSenha().compareTo(logInf.password) != 0) {
+             System.err.println("Senha incorreta");
+             System.out.println(tempUsr.getHashSenha());
+            }
         }
+        
         catch(Exception e) {
             System.out.println("Erro em fazer login.");
-           
+           e.printStackTrace();
         }
-        if (tempUsr.getHashSenha() != logInf.password) {
-            System.err.println("Senha incorreta");
-        }
-        } while(tempUsr.getHashSenha() != logInf.password)
+       
+        } while(tempUsr.getHashSenha() != logInf.password);
+        System.out.println("Login feito com sucesso");
+        return tempUsr.id;
     }
 }
