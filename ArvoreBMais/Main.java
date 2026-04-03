@@ -95,7 +95,7 @@ public class Main {
             System.out.println("\nLISTA COMPLETA");
             ArrayList<ParIntInt> lista = arvore.read(null);
             for (int i = 0; i < lista.size(); i++)
-              System.out.print(lista.get(i) + " ");
+              System.out.print(lista.get(i).getNum2() + " ");
           }
             break;
           case 5: {
