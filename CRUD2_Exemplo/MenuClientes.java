@@ -2,6 +2,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+import CRUD_Usuario.ArquivoCliente;
+
 public class MenuClientes {
     
     ArquivoCliente arqClientes;

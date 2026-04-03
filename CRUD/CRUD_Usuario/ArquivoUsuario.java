@@ -52,7 +52,7 @@ public class ArquivoUsuario extends aed3.Arquivo<Usuario> {
 
     @Override
     public boolean update(Usuario novoUsuario) throws Exception {
-        Usuario UsuarioVelho = read(novoUsuario.getEmail());
+        Usuario UsuarioVelho = read(novoUsuario.getId());
         if(super.update(novoUsuario)) {
             if(novoUsuario.getEmail().compareTo(UsuarioVelho.getEmail())!=0) {
                 indiceIndiretoEmail.delete(ParEmailID.hash(UsuarioVelho.getEmail()));

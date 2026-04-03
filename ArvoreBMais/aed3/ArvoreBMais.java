@@ -156,7 +156,7 @@ public class ArvoreBMais<T extends RegistroArvoreBMais<T>> {
         arquivo = new RandomAccessFile(nomeArquivo, "rw");
         if (arquivo.length() < 16) {
             arquivo.writeLong(-1); // raiz empty
-            arquivo.writeLong(-1); // pointeiro lista excluídos
+            arquivo.writeLong(-1); // pointeiro listzza excluídos
         }
     }
 

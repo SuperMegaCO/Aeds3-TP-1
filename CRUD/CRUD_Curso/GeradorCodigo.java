@@ -1,3 +1,4 @@
+package CRUD_Curso;
 import java.security.SecureRandom;
 
 public class GeradorCodigo {

@@ -12,11 +12,12 @@ public static void main(String[] args) {
         int opcao;
         do {
 
-            System.out.println("\n\nAEDsIII");
+            System.out.println("\n\nAEDsIII TP1 1:N");
             System.out.println("-------");
             System.out.println("> Início");
-            System.out.println("\n1 - Clientes");
-            System.out.println("0 - Sair");
+            System.out.println("\n(A) - Login");
+            System.out.println("\n(B) - Novo usuario\n");
+            System.out.println("(S) - Sair");
 
             System.out.print("\nOpção: ");
             try {

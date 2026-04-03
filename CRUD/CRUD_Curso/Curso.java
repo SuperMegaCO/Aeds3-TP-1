@@ -1,3 +1,4 @@
+package CRUD_Curso;
 import java.io.*;
 
 public class Curso {
