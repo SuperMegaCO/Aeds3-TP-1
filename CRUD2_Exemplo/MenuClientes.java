@@ -2,7 +2,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-import CRUD_Usuario.ArquivoCliente;
+import CRUD_Usuario.ArquivoUsuario;
 
 public class MenuClientes {
     

@@ -1,5 +1,5 @@
 import java.util.Scanner;
- 
+import Controle.*;
 public class CursoView {
 
     private CursoController controller;
