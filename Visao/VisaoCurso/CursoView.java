@@ -1,5 +1,8 @@
+package Visao;
 import java.util.Scanner;
 import Controle.*;
+import CRUD_Curso.*;
+
 public class CursoView {
 
     private CursoController controller;

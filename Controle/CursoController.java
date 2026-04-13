@@ -1,11 +1,11 @@
 package Controle;
-import Curso;
+import CRUD_Curso.*;
 public class CursoController {
 
-    private CursoCRUD crud;
+    private ArquivoCurso crud;
 
     public CursoController() throws Exception {
-        crud = new CursoCRUD("cursos.db");
+        crud = new ArquivoCurso();
     }
 
     public void criarCurso(int idUsuario, String nome, String data,

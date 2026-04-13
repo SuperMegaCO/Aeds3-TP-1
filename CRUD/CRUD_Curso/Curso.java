@@ -50,7 +50,7 @@ public class Curso implements Registro {
     // ========================
 
     @Override
-    public byte[] toByteArray() throws Exception {
+    public byte[] toByteArray() throws IOException {
         ByteArrayOutputStream ba = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(ba);
 
@@ -66,7 +66,7 @@ public class Curso implements Registro {
     }
 
     @Override
-    public void fromByteArray(byte[] ba) throws Exception {
+    public void fromByteArray(byte[] ba) throws IOException {
         ByteArrayInputStream bi = new ByteArrayInputStream(ba);
         DataInputStream dis = new DataInputStream(bi);
 
@@ -79,12 +79,10 @@ public class Curso implements Registro {
         estado = dis.readInt();
     }
 
-    @Override
     public int getID() {
         return id;
     }
 
-    @Override
     public void setID(int id) {
         this.id = id;
     }

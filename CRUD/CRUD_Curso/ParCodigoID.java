@@ -1,5 +1,7 @@
 package CRUD_Curso;
 
+import java.io.IOException;
+
 import aed3.*;
 
 public class ParCodigoID implements RegistroHashExtensivel<ParCodigoID> {
@@ -35,12 +37,12 @@ public class ParCodigoID implements RegistroHashExtensivel<ParCodigoID> {
     }
 
     @Override
-    public byte[] toByteArray() throws Exception {
+    public byte[] toByteArray() throws IOException {
         return (codigo + ";" + id).getBytes();
     }
 
     @Override
-    public void fromByteArray(byte[] ba) throws Exception {
+    public void fromByteArray(byte[] ba) throws IOException {
         String s = new String(ba);
         String[] partes = s.split(";");
         codigo = partes[0];
