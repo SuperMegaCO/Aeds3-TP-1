@@ -1,7 +1,10 @@
 package CRUD_Curso;
-import java.io.*;
 
-public class Curso {
+import java.io.*;
+import aed3.*;
+
+public class Curso implements Registro {
+
     private int id;
     private int idUsuario;
     private String nome;
@@ -10,10 +13,13 @@ public class Curso {
     private String codigo;
     private int estado;
 
-    public Curso() {}
+    public Curso() {
+        this(-1, -1, "", "", "", "", 0);
+    }
 
-    public Curso(int idUsuario, String nome, String dataInicio,
+    public Curso(int id, int idUsuario, String nome, String dataInicio,
                  String descricao, String codigo, int estado) {
+        this.id = id;
         this.idUsuario = idUsuario;
         this.nome = nome;
         this.dataInicio = dataInicio;
@@ -22,15 +28,29 @@ public class Curso {
         this.estado = estado;
     }
 
+    // ========================
     // GETTERS E SETTERS
+    // ========================
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
-    public int getIdUsuario() { return idUsuario; }
-    public String getCodigo() { return codigo; }
-    public int getEstado() { return estado; }
 
-    // SERIALIZAÇÃO
-    public byte[] toByteArray() throws IOException {
+    public int getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(int idUsuario) { this.idUsuario = idUsuario; }
+
+    public String getCodigo() { return codigo; }
+    public void setCodigo(String codigo) { this.codigo = codigo; }
+
+    public void setNome(String nome) { this.nome = nome; }
+    public void setDataInicio(String dataInicio) { this.dataInicio = dataInicio; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public void setEstado(int estado) { this.estado = estado; }
+
+    // ========================
+    // MÉTODOS DO TEMPLATE
+    // ========================
+
+    @Override
+    public byte[] toByteArray() throws Exception {
         ByteArrayOutputStream ba = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(ba);
 
@@ -45,7 +65,8 @@ public class Curso {
         return ba.toByteArray();
     }
 
-    public void fromByteArray(byte[] ba) throws IOException {
+    @Override
+    public void fromByteArray(byte[] ba) throws Exception {
         ByteArrayInputStream bi = new ByteArrayInputStream(ba);
         DataInputStream dis = new DataInputStream(bi);
 
@@ -58,6 +79,19 @@ public class Curso {
         estado = dis.readInt();
     }
 
+    @Override
+    public int getID() {
+        return id;
+    }
+
+    @Override
+    public void setID(int id) {
+        this.id = id;
+    }
+
+    // ========================
+    // DEBUG
+    // ========================
     @Override
     public String toString() {
         return "\nID: " + id +
