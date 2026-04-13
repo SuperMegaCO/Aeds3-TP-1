@@ -1,4 +1,4 @@
-package Visao.VisaoUsuario;
+package VisaoUsuario;
 
 public class LoginInfo {
     public String Email;
