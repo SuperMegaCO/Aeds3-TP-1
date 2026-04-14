@@ -1,53 +1,94 @@
 package CRUD_Curso;
 
-import aed3.*;
+import java.io.*;
+import aed3.RegistroArvoreBMais;
 
-public class ParIdUsuarioIdCurso implements RegistroHashExtensivel<ParIdUsuarioIdCurso> {
+public class ParIdUsuarioIdCurso implements RegistroArvoreBMais<ParIdUsuarioIdCurso> {
 
     private int idUsuario;
+    private String nomeCurso;
     private int idCurso;
 
+    private final short TAMANHO = 88; // 4 bytes (int) + 80 bytes (String 40 chars) + 4 bytes (int)
+
     public ParIdUsuarioIdCurso() {
-        this(-1, -1);
+        this(-1, "", -1);
     }
 
-    public ParIdUsuarioIdCurso(int idUsuario, int idCurso) {
+    public ParIdUsuarioIdCurso(int idUsuario, String nomeCurso, int idCurso) {
         this.idUsuario = idUsuario;
+        this.nomeCurso = ajustarString(nomeCurso);
         this.idCurso = idCurso;
     }
 
-    public int getIdCurso() {
-        return idCurso;
+    private String ajustarString(String s) {
+        if (s == null) s = "";
+        if (s.length() > 40) return s.substring(0, 40);
+        while (s.length() < 40) s += " ";
+        return s;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
-    }
-
-    public static int hash(int idUsuario, int idCurso) {
-        return (idUsuario + "-" + idCurso).hashCode();
-    }
-
-    @Override
-    public int hashCode() {
-        return (idUsuario + "-" + idCurso).hashCode();
-    }
+    public int getIdUsuario() { return idUsuario; }
+    public String getNomeCurso() { return nomeCurso.trim(); }
+    public int getIdCurso() { return idCurso; }
 
     @Override
     public short size() {
-        return 20;
+        return TAMANHO;
     }
 
     @Override
-    public byte[] toByteArray() throws Exception {
-        return (idUsuario + ";" + idCurso).getBytes();
+    public byte[] toByteArray() throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DataOutputStream dos = new DataOutputStream(baos);
+
+        dos.writeInt(idUsuario);
+        
+        String s = ajustarString(nomeCurso);
+        for (int i = 0; i < 40; i++) {
+            dos.writeChar(s.charAt(i));
+        }
+        
+        dos.writeInt(idCurso);
+
+        return baos.toByteArray();
     }
 
     @Override
-    public void fromByteArray(byte[] ba) throws Exception {
-        String s = new String(ba);
-        String[] partes = s.split(";");
-        idUsuario = Integer.parseInt(partes[0]);
-        idCurso = Integer.parseInt(partes[1]);
+    public void fromByteArray(byte[] ba) throws IOException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(ba);
+        DataInputStream dis = new DataInputStream(bais);
+
+        idUsuario = dis.readInt();
+
+        char[] c = new char[40];
+        for (int i = 0; i < 40; i++) {
+            c[i] = dis.readChar();
+        }
+        nomeCurso = new String(c);
+
+        idCurso = dis.readInt();
+    }
+
+    @Override
+    public int compareTo(ParIdUsuarioIdCurso a) {
+        if (this.idUsuario != a.idUsuario) {
+            return Integer.compare(this.idUsuario, a.idUsuario);
+        }
+
+        if (a.nomeCurso.trim().isEmpty()) {
+            return 0;
+        }
+
+        if (!this.nomeCurso.trim().equals(a.nomeCurso.trim())) {
+            return this.nomeCurso.trim().compareToIgnoreCase(a.nomeCurso.trim());
+        }
+
+        return Integer.compare(this.idCurso, a.idCurso);
+    }
+
+    @Override
+    public ParIdUsuarioIdCurso clone() {
+        return new ParIdUsuarioIdCurso(this.idUsuario, this.nomeCurso, this.idCurso);
     }
 }

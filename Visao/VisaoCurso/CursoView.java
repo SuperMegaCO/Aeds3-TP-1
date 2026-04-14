@@ -1,4 +1,4 @@
-package Visao;
+package Visao.VisaoCurso;
 import java.util.Scanner;
 import Controle.*;
 import CRUD_Curso.*;
@@ -81,7 +81,7 @@ public class CursoView {
         System.out.print("Novo estado: ");
         int estado = sc.nextInt();
 
-        Curso c = new Curso(0, nome, data, desc, "", estado);
+        Curso c = new Curso(-1, 0, nome, data, desc, "", estado);
         c.setId(id);
 
         controller.atualizarCurso(c);

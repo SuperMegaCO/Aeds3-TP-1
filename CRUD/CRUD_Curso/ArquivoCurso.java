@@ -5,8 +5,7 @@ import aed3.*;
 public class ArquivoCurso extends aed3.Arquivo<Curso> {
 
     HashExtensivel<ParCodigoID> indiceCodigo;
-    HashExtensivel<ParIdUsuarioIdCurso> indiceUsuario;
-
+ArvoreBMais<ParIdUsuarioIdCurso> indiceUsuario;
     public ArquivoCurso() throws Exception {
         super("Cursos", Curso.class.getConstructor());
 
@@ -17,12 +16,11 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
             ".\\dados\\Cursos\\indiceCodigo.c.db"
         );
 
-        indiceUsuario = new HashExtensivel<>(
-            ParIdUsuarioIdCurso.class.getConstructor(),
-            4,
-            ".\\dados\\Cursos\\indiceUsuario.d.db",
-            ".\\dados\\Cursos\\indiceUsuario.c.db"
-        );
+        indiceUsuario = new ArvoreBMais<>(
+    ParIdUsuarioIdCurso.class.getConstructor(),
+    5,
+    ".\\dados\\Cursos\\indiceUsuario.db"
+);
     }
 
     // ========================
@@ -42,8 +40,7 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
         indiceCodigo.create(new ParCodigoID(c.getCodigo(), id));
 
         // índice por usuário (1:N)
-        indiceUsuario.create(new ParIdUsuarioIdCurso(c.getIdUsuario(), id));
-
+        indiceUsuario.create(new ParIdUsuarioIdCurso(c.getIdUsuario(), c.getNome(), id));
         return id;
     }
 
@@ -88,8 +85,8 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
 
                 // remove índice usuário
                 indiceUsuario.delete(
-                    ParIdUsuarioIdCurso.hash(c.getIdUsuario(), id)
-                );
+    new ParIdUsuarioIdCurso(c.getIdUsuario(), c.getNome(), id)
+);
 
                 return true;
             }
@@ -114,15 +111,15 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
             // código NÃO deve mudar (segurança)
             novo.setCodigo(antigo.getCodigo());
 
-            // se mudar usuário → atualiza índice
-            if (novo.getIdUsuario() != antigo.getIdUsuario()) {
+            // se mudar usuário ou nome → atualiza índice na árvore B+
+            if (novo.getIdUsuario() != antigo.getIdUsuario() || !novo.getNome().equals(antigo.getNome())) {
 
                 indiceUsuario.delete(
-                    ParIdUsuarioIdCurso.hash(antigo.getIdUsuario(), antigo.getId())
+                    new ParIdUsuarioIdCurso(antigo.getIdUsuario(), antigo.getNome(), antigo.getId())
                 );
 
                 indiceUsuario.create(
-                    new ParIdUsuarioIdCurso(novo.getIdUsuario(), novo.getId())
+                    new ParIdUsuarioIdCurso(novo.getIdUsuario(), novo.getNome(), novo.getId())
                 );
             }
 
