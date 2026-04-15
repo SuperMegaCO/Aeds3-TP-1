@@ -1,9 +1,10 @@
 package Controle;
+
 import java.util.ArrayList;
 import aed3.*;
 import CRUD_Curso.*;
 import aed3.ArvoreBMais;
-import ArvoreBMais.ParIntInt;
+
 public class CursoController {
 
     private ArquivoCurso crud;
@@ -11,22 +12,22 @@ public class CursoController {
     public CursoController() throws Exception {
         crud = new ArquivoCurso();
     }
-    public void listarCursosUsuario(int id) throws Exception {
-            ArvoreBMais<ParIntInt> arvore = new ArvoreBMais<>(ParIntInt.class.getConstructor(), 5, "dados/arvore.db");
-            int n1 = id;
 
-            ArrayList<ParIntInt> lista = arvore.read(null);
+    public void listarCursosUsuario(int idUsuario) throws Exception {
+        java.util.ArrayList<Curso> cursos = crud.readCursosDoUsuario(idUsuario);
+        System.out.println("\nCURSOS");
+        if (cursos.isEmpty()) {
+            System.out.println("Nenhum curso encontrado.");
+            return;
+        }
+        for (int i = 0; i < cursos.size(); i++) {
+            Curso c = cursos.get(i);
+            System.out.println("(" + (i + 1) + ") " + c.getNome() + " - " + c.getDataInicio());
+        }
+    }
 
-            System.out.println("Cursos encontrados:");
-
-            for (ParIntInt p : lista) {
-              if (p.getNum1() == n1)
-                System.out.println(p.getNum2());
-            }
-          }
-    
     public void criarCurso(int idUsuario, String nome, String data,
-                           String descricao, int estado) throws Exception {
+            String descricao, int estado) throws Exception {
 
         String codigo = GeradorCodigo.gerar();
 
@@ -60,5 +61,4 @@ public class CursoController {
             System.out.println("Erro ao remover.");
     }
 
-  
 }
