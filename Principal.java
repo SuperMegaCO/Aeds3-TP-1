@@ -18,13 +18,14 @@ public class Principal {
             System.out.println("> Início");
             if (currentUserId == -1) {
                 System.out.println("\n(A) - Login");
-                System.out.println("\n(B) - Novo usuario\n");
+                System.out.println("(B) - Novo usuario\n");
                 System.out.println("(S) - Sair");
 
                 System.out.print("\nOpção: ");
                 try {
-                    opcao = console.nextLine().charAt(0);
-                } catch (NumberFormatException e) {
+                    String input = console.nextLine();
+                    opcao = input.length() > 0 ? Character.toUpperCase(input.charAt(0)) : ' ';
+                } catch (Exception e) {
                     opcao = ' ';
                 }
 
@@ -44,16 +45,37 @@ public class Principal {
                 System.out.println("(D) - Meus cursos");
                 System.out.println("(S) - Deslogar");
                 System.out.print("\nOpção: ");
+                try {
+                    String input = console.nextLine();
+                    opcao = input.length() > 0 ? Character.toUpperCase(input.charAt(0)) : ' ';
+                } catch (Exception e) {
+                    opcao = ' ';
+                }
                 switch (opcao) {
                     case 'C':
-                        System.out.println("Abrindo meus dados...");
+                        try {
+                            boolean deleted = new Controle.ControleUsuario().MeusDadosMenu(currentUserId);
+                            if (deleted) {
+                                currentUserId = -1;
+                                opcao = ' ';
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Erro: " + e.getMessage());
+                        }
                         break;
                     case 'D':
-                        System.out.println("Abrindo meus cursos...");
+                        try {
+                            new Controle.CursoController().menuCursos(currentUserId);
+                        } catch (Exception e) {
+                            System.out.println("Erro ao abrir cursos: " + e.getMessage());
+                        }
                         break;
                     case 'S':
                         currentUserId = -1;
                         opcao = ' ';
+                        break;
+                    default:
+                        System.out.println("Opção inválida!");
                         break;
                 }
             }

@@ -40,9 +40,13 @@ public class Curso implements Registro {
     public String getCodigo() { return codigo; }
     public void setCodigo(String codigo) { this.codigo = codigo; }
 
+    public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
+    public String getDataInicio() { return dataInicio; }
     public void setDataInicio(String dataInicio) { this.dataInicio = dataInicio; }
+    public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
+    public int getEstado() { return estado; }
     public void setEstado(int estado) { this.estado = estado; }
 
     // ========================

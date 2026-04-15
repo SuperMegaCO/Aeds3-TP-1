@@ -26,6 +26,70 @@ public class CursoController {
         }
     }
 
+    public void menuCursos(int idUsuario) throws Exception {
+        Visao.VisaoCurso.VisaoCurso visao = new Visao.VisaoCurso.VisaoCurso();
+        char opcao;
+        do {
+            java.util.ArrayList<Curso> cursos = crud.readCursosDoUsuario(idUsuario);
+            System.out.println("\n> Início > Meus cursos\n\nCURSOS");
+            if (cursos.isEmpty()) {
+                System.out.println("Nenhum curso encontrado.");
+            } else {
+                for (int i = 0; i < cursos.size(); i++) {
+                    Curso c = cursos.get(i);
+                    System.out.println("(" + (i + 1) + ") " + c.getNome() + " - " + c.getDataInicio());
+                }
+            }
+            
+            opcao = visao.menuMeusCursos();
+            if (opcao == 'A') {
+                Curso novo = visao.lerCurso();
+                novo.setIdUsuario(idUsuario);
+                crud.create(novo);
+                System.out.println("Curso criado!");
+            } else if (opcao >= '1' && opcao <= '9') {
+                int index = opcao - '1';
+                if (index >= 0 && index < cursos.size()) {
+                    menuCursoDetalhes(cursos.get(index), visao);
+                }
+            }
+        } while (opcao != 'R');
+    }
+
+    private void menuCursoDetalhes(Curso c, Visao.VisaoCurso.VisaoCurso visao) throws Exception {
+        char op;
+        do {
+            visao.mostraCurso(c);
+            op = visao.menuCursoDetalhes();
+            switch (op) {
+                case 'B':
+                    Curso atualizado = visao.lerCurso();
+                    atualizado.setId(c.getId());
+                    atualizado.setIdUsuario(c.getIdUsuario());
+                    atualizado.setCodigo(c.getCodigo());
+                    atualizado.setEstado(c.getEstado());
+                    crud.update(atualizado);
+                    c = atualizado;
+                    break;
+                case 'C':
+                    c.setEstado(1);
+                    crud.update(c);
+                    System.out.println("Inscrições encerradas.");
+                    break;
+                case 'D':
+                    c.setEstado(2);
+                    crud.update(c);
+                    System.out.println("Curso concluído.");
+                    break;
+                case 'E':
+                    c.setEstado(3);
+                    crud.update(c);
+                    System.out.println("Curso cancelado.");
+                    break;
+            }
+        } while (op != 'R');
+    }
+
     public void criarCurso(int idUsuario, String nome, String data,
             String descricao, int estado) throws Exception {
 

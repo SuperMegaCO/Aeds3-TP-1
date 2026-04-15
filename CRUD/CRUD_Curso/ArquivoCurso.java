@@ -23,6 +23,18 @@ ArvoreBMais<ParIdUsuarioIdCurso> indiceUsuario;
 );
     }
 
+    public java.util.ArrayList<Curso> readCursosDoUsuario(int idUsuario) throws Exception {
+        java.util.ArrayList<Curso> cursos = new java.util.ArrayList<>();
+        java.util.ArrayList<ParIdUsuarioIdCurso> pares = indiceUsuario.read(new ParIdUsuarioIdCurso(idUsuario, "", -1));
+        
+        for (ParIdUsuarioIdCurso p : pares) {
+            Curso c = super.read(p.getIdCurso());
+            if (c != null) {
+                cursos.add(c);
+            }
+        }
+        return cursos;
+    }
     // ========================
     // CREATE
     // ========================
