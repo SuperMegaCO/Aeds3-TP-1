@@ -1,3 +1,4 @@
+package ArvoreBMais;
 import java.io.*;
 
 public class ParIntInt implements aed3.RegistroArvoreBMais<ParIntInt> {

@@ -1,32 +1,33 @@
 package CRUD_Curso;
 
+import java.util.ArrayList;
+
 import aed3.*;
 
 public class ArquivoCurso extends aed3.Arquivo<Curso> {
 
     HashExtensivel<ParCodigoID> indiceCodigo;
-ArvoreBMais<ParIdUsuarioIdCurso> indiceUsuario;
+    ArvoreBMais<ParIdUsuarioIdCurso> indiceUsuario;
+
     public ArquivoCurso() throws Exception {
         super("Cursos", Curso.class.getConstructor());
 
         indiceCodigo = new HashExtensivel<>(
-            ParCodigoID.class.getConstructor(),
-            4,
-            ".\\dados\\Cursos\\indiceCodigo.d.db",
-            ".\\dados\\Cursos\\indiceCodigo.c.db"
-        );
+                ParCodigoID.class.getConstructor(),
+                4,
+                ".\\dados\\Cursos\\indiceCodigo.d.db",
+                ".\\dados\\Cursos\\indiceCodigo.c.db");
 
         indiceUsuario = new ArvoreBMais<>(
-    ParIdUsuarioIdCurso.class.getConstructor(),
-    5,
-    ".\\dados\\Cursos\\indiceUsuario.db"
-);
+                ParIdUsuarioIdCurso.class.getConstructor(),
+                5,
+                ".\\dados\\Cursos\\indiceUsuario.db");
     }
 
-    public java.util.ArrayList<Curso> readCursosDoUsuario(int idUsuario) throws Exception {
-        java.util.ArrayList<Curso> cursos = new java.util.ArrayList<>();
-        java.util.ArrayList<ParIdUsuarioIdCurso> pares = indiceUsuario.read(new ParIdUsuarioIdCurso(idUsuario, "", -1));
-        
+    public ArrayList<Curso> readCursosDoUsuario(int idUsuario) throws Exception {
+        ArrayList<Curso> cursos = new ArrayList<>();
+        ArrayList<ParIdUsuarioIdCurso> pares = indiceUsuario.read(new ParIdUsuarioIdCurso(idUsuario, "", -1));
+
         for (ParIdUsuarioIdCurso p : pares) {
             Curso c = super.read(p.getIdCurso());
             if (c != null) {
@@ -35,6 +36,7 @@ ArvoreBMais<ParIdUsuarioIdCurso> indiceUsuario;
         }
         return cursos;
     }
+
     // ========================
     // CREATE
     // ========================
@@ -97,8 +99,7 @@ ArvoreBMais<ParIdUsuarioIdCurso> indiceUsuario;
 
                 // remove índice usuário
                 indiceUsuario.delete(
-    new ParIdUsuarioIdCurso(c.getIdUsuario(), c.getNome(), id)
-);
+                        new ParIdUsuarioIdCurso(c.getIdUsuario(), c.getNome(), id));
 
                 return true;
             }
@@ -127,12 +128,10 @@ ArvoreBMais<ParIdUsuarioIdCurso> indiceUsuario;
             if (novo.getIdUsuario() != antigo.getIdUsuario() || !novo.getNome().equals(antigo.getNome())) {
 
                 indiceUsuario.delete(
-                    new ParIdUsuarioIdCurso(antigo.getIdUsuario(), antigo.getNome(), antigo.getId())
-                );
+                        new ParIdUsuarioIdCurso(antigo.getIdUsuario(), antigo.getNome(), antigo.getId()));
 
                 indiceUsuario.create(
-                    new ParIdUsuarioIdCurso(novo.getIdUsuario(), novo.getNome(), novo.getId())
-                );
+                        new ParIdUsuarioIdCurso(novo.getIdUsuario(), novo.getNome(), novo.getId()));
             }
 
             return true;

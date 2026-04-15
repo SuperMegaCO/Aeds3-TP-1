@@ -1,5 +1,6 @@
 package Controle;
 
+import java.util.ArrayList;
 import java.util.Scanner;
     import CRUD_Usuario.Usuario;
 import CRUD_Usuario.ArquivoUsuario;
@@ -36,17 +37,17 @@ public class ControleUsuario {
         System.out.println("-------");
         System.out.println("> Inicio > Login");
         do {
-            logInf = visUsuario.Login();
-            try {
-                tempUsr = arqUsuarios.read(logInf.Email);
+           logInf = visUsuario.Login();
+        try {
+            tempUsr = arqUsuarios.read(logInf.Email);
                 if (tempUsr == null) {
                     System.err.println("Usuário não encontrado.");
                 } else if (!tempUsr.getHashSenha().equals(logInf.password)) {
-                    System.err.println("Senha incorreta");
-                }
+             System.err.println("Senha incorreta");
+        }
             } catch(Exception e) {
-                System.out.println("Erro em fazer login.");
-                e.printStackTrace();
+            System.out.println("Erro em fazer login.");
+           e.printStackTrace();
                 tempUsr = null;
             }
         } while(tempUsr == null || !tempUsr.getHashSenha().equals(logInf.password));
@@ -68,7 +69,7 @@ public class ControleUsuario {
             char op = input.length() > 0 ? Character.toUpperCase(input.charAt(0)) : ' ';
             if (op == 'E') {
                 CRUD_Curso.ArquivoCurso arqCursos = new CRUD_Curso.ArquivoCurso();
-                java.util.ArrayList<CRUD_Curso.Curso> cursos = arqCursos.readCursosDoUsuario(idUsuario);
+                ArrayList<CRUD_Curso.Curso> cursos = arqCursos.readCursosDoUsuario(idUsuario);
                 boolean hasActive = false;
                 for (CRUD_Curso.Curso c : cursos) {
                     // Estado 0 e 1 são cursos ativos
