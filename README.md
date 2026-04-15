@@ -1,6 +1,6 @@
 # AEDS III - Trabalho Prático 1
 
-**Membros do Grupo**: Rafael
+**Membros do Grupo**: Gabriel Couto, Leonardo Amaral, Rafael Cortat
 
 ## Descrição do Sistema
 Este projeto é a primeira etapa de um sistema de gestão de inscrições em cursos livres (EntrePares). Ele implementa o cadastro de usuários e a gestão de cursos ofertados por esses usuários (com relacionamento 1:N utilizando Árvore B+), seguindo o padrão MVC. O acesso de dados foi construído com a base de CRUD genérico fornecida pelo professor, com índices diretos (Hash Extensível) e indiretos (Árvore B+). O menu inicial guia o usuário a fazer login ou criar conta. E o submenu interno permite acessar os Próprios Dados (para possível exclusão de conta) e gerenciar os cursos que ofertou.
