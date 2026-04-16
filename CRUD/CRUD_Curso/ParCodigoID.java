@@ -43,9 +43,14 @@ public class ParCodigoID implements RegistroHashExtensivel<ParCodigoID> {
 
     @Override
     public void fromByteArray(byte[] ba) throws IOException {
-        String s = new String(ba);
+        String s = new String(ba).trim();
+        if (s.isEmpty() || s.indexOf(';') == -1) {
+            codigo = "";
+            id = -1;
+            return;
+        }
         String[] partes = s.split(";");
         codigo = partes[0];
-        id = Integer.parseInt(partes[1]);
+        id = Integer.parseInt(partes[1].trim());
     }
 }
