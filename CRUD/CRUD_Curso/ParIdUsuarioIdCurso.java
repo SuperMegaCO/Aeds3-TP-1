@@ -76,7 +76,7 @@ public class ParIdUsuarioIdCurso implements RegistroArvoreBMais<ParIdUsuarioIdCu
             return Integer.compare(this.idUsuario, a.idUsuario);
         }
 
-        if (a.nomeCurso.trim().isEmpty()) {
+        if (this.idCurso == -1 || a.idCurso == -1 || this.nomeCurso.trim().isEmpty() || a.nomeCurso.trim().isEmpty()) {
             return 0;
         }
 
