@@ -133,9 +133,9 @@ public class InscricoesController {
         return false;
     }
 
-    public void deletarInscricao(RelacionamentoCursoUsuario c) throws Exception {
-        if (crud.delete(c.getId()))
-            System.out.println("Inscricao removido!");
+    public void deletarInscricao(int idCurso, int idUsuario) throws Exception {
+        if (crud.delete(idCurso, idUsuario))
+            System.out.println("Inscricao removida!");
         else
             System.out.println("Erro ao remover.");
     }

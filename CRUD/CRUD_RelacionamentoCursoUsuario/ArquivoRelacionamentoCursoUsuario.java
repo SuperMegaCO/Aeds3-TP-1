@@ -23,7 +23,7 @@ public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<Relacionamen
 
     public ArrayList<RelacionamentoCursoUsuario> readUsuariosDoCurso(int idCurso) throws Exception {
         ArrayList<RelacionamentoCursoUsuario> relacionamentos = new ArrayList<>();
-        ArrayList<ParIdCurso_IdUsuario> pares = indiceIdCurso.read(new ParIdCurso_IdUsuario(idCurso, "", -1));
+        ArrayList<ParIdCurso_IdUsuario> pares = indiceIdCurso.read(new ParIdCurso_IdUsuario(idCurso, -1, ""));
 
         for (ParIdCurso_IdUsuario p : pares) {
             RelacionamentoCursoUsuario c = super.read(p.getIdUsuario());
@@ -53,7 +53,7 @@ public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<Relacionamen
     public int create(RelacionamentoCursoUsuario c) throws Exception {
         int id = super.create(c);
         indiceIdUsuario.create(new ParIdUsuario_IdCurso(c.getIdUsuario(), c.getIdCurso(), c.getNomeUsuario()));
-        indiceIdCurso.create(new ParIdCurso_IdUsuario(c.getIdCurso(), c.getNomeCurso(), c.getIdUsuario()));
+        indiceIdCurso.create(new ParIdCurso_IdUsuario(c.getIdCurso(), c.getIdUsuario(), c.getNomeCurso()));
         return id;
     }
 
@@ -64,8 +64,18 @@ public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<Relacionamen
         if (c != null) {
             if (super.delete(id)) {
                 indiceIdUsuario.delete(new ParIdUsuario_IdCurso(c.getIdUsuario(), c.getIdCurso(), ""));
-                indiceIdCurso.delete(new ParIdCurso_IdUsuario(c.getIdCurso(), c.getNomeCurso(), c.getIdUsuario()));
+                indiceIdCurso.delete(new ParIdCurso_IdUsuario(c.getIdCurso(), c.getIdUsuario(), c.getNomeCurso()));
                 return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean delete(int idUsuario, int idCurso) throws Exception {
+        ArrayList<RelacionamentoCursoUsuario> inscricoes = this.readCursosDoUsuario(idUsuario);
+        for (RelacionamentoCursoUsuario inscricao : inscricoes) {
+            if (inscricao.getIdCurso() == idCurso) {
+                return this.delete(inscricao.getId());
             }
         }
         return false;
@@ -81,13 +91,13 @@ public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<Relacionamen
 
                 indiceIdUsuario.delete(new ParIdUsuario_IdCurso(velhoRelacionamento.getIdUsuario(),
                         velhoRelacionamento.getIdCurso(), ""));
-                indiceIdCurso.delete(new ParIdCurso_IdUsuario(velhoRelacionamento.getIdCurso(), "",
-                        velhoRelacionamento.getIdUsuario()));
+                indiceIdCurso.delete(new ParIdCurso_IdUsuario(velhoRelacionamento.getIdCurso(),
+                        velhoRelacionamento.getIdUsuario(), ""));
 
                 indiceIdUsuario.create(new ParIdUsuario_IdCurso(novoRelacionamento.getIdUsuario(),
                         novoRelacionamento.getIdCurso(), novoRelacionamento.getNomeUsuario()));
                 indiceIdCurso.create(new ParIdCurso_IdUsuario(novoRelacionamento.getIdCurso(),
-                        novoRelacionamento.getNomeCurso(), novoRelacionamento.getIdUsuario()));
+                        novoRelacionamento.getIdUsuario(), novoRelacionamento.getNomeCurso()));
             }
             return true;
         }

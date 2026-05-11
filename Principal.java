@@ -43,6 +43,7 @@ public class Principal {
             } else {
                 System.out.println("\n(C) - Meus dados");
                 System.out.println("(D) - Meus cursos");
+                System.out.println("(E) - Minhas inscricoes");
                 System.out.println("(S) - Deslogar");
                 System.out.print("\nOpção: ");
                 try {
@@ -68,6 +69,13 @@ public class Principal {
                             new Controle.CursoController().menuCursos(currentUserId);
                         } catch (Exception e) {
                             System.out.println("Erro ao abrir cursos: " + e.getMessage());
+                        }
+                        break;
+                    case 'E':
+                        try {
+                            new Controle.InscricaoController().menuInscricoes(currentUserId);
+                        } catch (Exception e) {
+                            System.out.println("Erro ao abrir inscricoes: " + e.getMessage());
                         }
                         break;
                     case 'S':

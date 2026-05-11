@@ -1,3 +1,4 @@
+package CRUD_RelacionamentoCursoUsuario;
 
 import java.io.*;
 import aed3.RegistroArvoreBMais;
@@ -5,19 +6,19 @@ import aed3.RegistroArvoreBMais;
 public class ParIdUsuario_IdCurso implements RegistroArvoreBMais<ParIdUsuario_IdCurso> {
 
     private int idUsuario;
-    private String nomeCurso;
     private int idCurso;
+    private String nomeUsuario;
 
-    private final short TAMANHO = 88; // 4 bytes (int) + 80 bytes (String 40 chars) + 4 bytes (int)
+    private final short TAMANHO = 88; // 4 bytes (int) + 4 bytes (int) + 80 bytes (String 40 chars)
 
     public ParIdUsuario_IdCurso() {
-        this(-1, "", -1);
+        this(-1, -1, "");
     }
 
-    public ParIdUsuario_IdCurso(int idUsuario, String nomeCurso, int idCurso) {
+    public ParIdUsuario_IdCurso(int idUsuario, int idCurso, String nomeUsuario) {
         this.idUsuario = idUsuario;
-        this.nomeCurso = ajustarString(nomeCurso);
         this.idCurso = idCurso;
+        this.nomeUsuario = ajustarString(nomeUsuario);
     }
 
     private String ajustarString(String s) {
@@ -34,12 +35,12 @@ public class ParIdUsuario_IdCurso implements RegistroArvoreBMais<ParIdUsuario_Id
         return idUsuario;
     }
 
-    public String getNomeCurso() {
-        return nomeCurso.trim();
-    }
-
     public int getIdCurso() {
         return idCurso;
+    }
+
+    public String getNomeUsuario() {
+        return nomeUsuario.trim();
     }
 
     @Override
@@ -53,13 +54,12 @@ public class ParIdUsuario_IdCurso implements RegistroArvoreBMais<ParIdUsuario_Id
         DataOutputStream dos = new DataOutputStream(baos);
 
         dos.writeInt(idUsuario);
+        dos.writeInt(idCurso);
 
-        String s = ajustarString(nomeCurso);
+        String s = ajustarString(nomeUsuario);
         for (int i = 0; i < 40; i++) {
             dos.writeChar(s.charAt(i));
         }
-
-        dos.writeInt(idCurso);
 
         return baos.toByteArray();
     }
@@ -70,36 +70,28 @@ public class ParIdUsuario_IdCurso implements RegistroArvoreBMais<ParIdUsuario_Id
         DataInputStream dis = new DataInputStream(bais);
 
         idUsuario = dis.readInt();
+        idCurso = dis.readInt();
 
         char[] c = new char[40];
         for (int i = 0; i < 40; i++) {
             c[i] = dis.readChar();
         }
-        nomeCurso = new String(c);
-
-        idCurso = dis.readInt();
+        nomeUsuario = new String(c);
     }
 
     @Override
     public int compareTo(ParIdUsuario_IdCurso a) {
+        if (this.idUsuario != a.idUsuario) {
+            return Integer.compare(this.idUsuario, a.idUsuario);
+        }
         if (this.idCurso != a.idCurso) {
             return Integer.compare(this.idCurso, a.idCurso);
         }
-
-        if (this.idUsuario == -1 || a.idUsuario == -1 || this.nomeCurso.trim().isEmpty()
-                || a.nomeCurso.trim().isEmpty()) {
-            return 0;
-        }
-
-        if (!this.nomeCurso.trim().equals(a.nomeCurso.trim())) {
-            return this.nomeCurso.trim().compareToIgnoreCase(a.nomeCurso.trim());
-        }
-
-        return Integer.compare(this.idUsuario, a.idUsuario);
+        return this.nomeUsuario.trim().compareToIgnoreCase(a.nomeUsuario.trim());
     }
 
     @Override
     public ParIdUsuario_IdCurso clone() {
-        return new ParIdUsuario_IdCurso(this.idUsuario, this.nomeCurso, this.idCurso);
+        return new ParIdUsuario_IdCurso(this.idUsuario, this.idCurso, this.nomeUsuario);
     }
 }

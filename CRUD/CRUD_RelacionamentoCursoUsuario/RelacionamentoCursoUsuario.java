@@ -20,14 +20,14 @@ public class RelacionamentoCursoUsuario implements Registro {
     public String nomeUsuario;
 
     public RelacionamentoCursoUsuario() {
-        this(-1, LocalDate.now(), -1, -1);
+        this(-1, LocalDate.now(), -1, -1, "", "");
     }
 
-    public RelacionamentoCursoUsuario(LocalDate dataInscricao, int idCurso, int idUsuario) {
-        this(-1, dataInscricao, idCurso, idUsuario);
+    public RelacionamentoCursoUsuario(LocalDate dataInscricao, int idCurso, int idUsuario, String nomeCurso, String nomeUsuario) {
+        this(-1, dataInscricao, idCurso, idUsuario, nomeCurso, nomeUsuario);
     }
 
-    public RelacionamentoCursoUsuario(int id, LocalDate dataInscricao, int idCurso, int idUsuario) {
+    public RelacionamentoCursoUsuario(int id, LocalDate dataInscricao, int idCurso, int idUsuario, String nomeCurso, String nomeUsuario) {
         this.id = id;
         this.dataInscricao = dataInscricao;
         this.idCurso = idCurso;
