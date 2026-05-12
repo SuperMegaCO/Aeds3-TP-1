@@ -5,30 +5,27 @@ import aed3.RegistroArvoreBMais;
 
 public class ParIdCurso_IdUsuario implements RegistroArvoreBMais<ParIdCurso_IdUsuario> {
 
-    private String codigoCurso;
+    private int idCurso;
     private int idUsuario;
+    private int idRelacionamento;
     private String nomeCurso;
 
-    private final short TAMANHO = 104; // 20 bytes (String 10 chars) + 4 bytes (int) + 80 bytes (String 40 chars)
+    private final short TAMANHO = 92; // 4 bytes (int) + 4 bytes (int) + 4 bytes (int) + 80 bytes (String 40 chars)
 
     public ParIdCurso_IdUsuario() {
-        this("", -1, "");
+        this(-1, -1, -1, "");
     }
 
-    public ParIdCurso_IdUsuario(String codigoCurso, int idUsuario, String nomeCurso) {
-        this.codigoCurso = ajustarCodigo(codigoCurso);
+    public ParIdCurso_IdUsuario(int idCurso, int idUsuario, int idRelacionamento, String nomeCurso) {
+        this.idCurso = idCurso;
         this.idUsuario = idUsuario;
+        this.idRelacionamento = idRelacionamento;
         this.nomeCurso = ajustarString(nomeCurso);
     }
-
-    private String ajustarCodigo(String s) {
-        if (s == null)
-            s = "";
-        if (s.length() > 10)
-            return s.substring(0, 10);
-        while (s.length() < 10)
-            s += " ";
-        return s;
+    
+    // Construtor compatível para buscas no índice (idRelacionamento = -1)
+    public ParIdCurso_IdUsuario(int idCurso, int idUsuario, String nomeCurso) {
+        this(idCurso, idUsuario, -1, nomeCurso);
     }
 
     private String ajustarString(String s) {
@@ -41,12 +38,16 @@ public class ParIdCurso_IdUsuario implements RegistroArvoreBMais<ParIdCurso_IdUs
         return s;
     }
 
-    public String getCodigoCurso() {
-        return codigoCurso.trim();
+    public int getIdCurso() {
+        return idCurso;
     }
 
     public int getIdUsuario() {
         return idUsuario;
+    }
+
+    public int getIdRelacionamento() {
+        return idRelacionamento;
     }
 
     public String getNomeCurso() {
@@ -63,11 +64,9 @@ public class ParIdCurso_IdUsuario implements RegistroArvoreBMais<ParIdCurso_IdUs
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
 
-        String cod = ajustarCodigo(codigoCurso);
-        for (int i = 0; i < 10; i++) {
-            dos.writeChar(cod.charAt(i));
-        }
+        dos.writeInt(idCurso);
         dos.writeInt(idUsuario);
+        dos.writeInt(idRelacionamento);
 
         String s = ajustarString(nomeCurso);
         for (int i = 0; i < 40; i++) {
@@ -82,12 +81,9 @@ public class ParIdCurso_IdUsuario implements RegistroArvoreBMais<ParIdCurso_IdUs
         ByteArrayInputStream bais = new ByteArrayInputStream(ba);
         DataInputStream dis = new DataInputStream(bais);
 
-        char[] cod = new char[10];
-        for (int i = 0; i < 10; i++) {
-            cod[i] = dis.readChar();
-        }
-        codigoCurso = new String(cod);
+        idCurso = dis.readInt();
         idUsuario = dis.readInt();
+        idRelacionamento = dis.readInt();
 
         char[] c = new char[40];
         for (int i = 0; i < 40; i++) {
@@ -98,17 +94,24 @@ public class ParIdCurso_IdUsuario implements RegistroArvoreBMais<ParIdCurso_IdUs
 
     @Override
     public int compareTo(ParIdCurso_IdUsuario a) {
-        if (!this.codigoCurso.trim().equals(a.codigoCurso.trim())) {
-            return this.codigoCurso.trim().compareToIgnoreCase(a.codigoCurso.trim());
+        if (this.idCurso != a.idCurso) {
+            return Integer.compare(this.idCurso, a.idCurso);
+        }
+        // Partial search match
+        if (this.idUsuario == -1 || a.idUsuario == -1) {
+            return 0;
         }
         if (this.idUsuario != a.idUsuario) {
             return Integer.compare(this.idUsuario, a.idUsuario);
+        }
+        if (this.idRelacionamento != -1 && a.idRelacionamento != -1 && this.idRelacionamento != a.idRelacionamento) {
+            return Integer.compare(this.idRelacionamento, a.idRelacionamento);
         }
         return this.nomeCurso.trim().compareToIgnoreCase(a.nomeCurso.trim());
     }
 
     @Override
     public ParIdCurso_IdUsuario clone() {
-        return new ParIdCurso_IdUsuario(this.codigoCurso, this.idUsuario, this.nomeCurso);
+        return new ParIdCurso_IdUsuario(this.idCurso, this.idUsuario, this.idRelacionamento, this.nomeCurso);
     }
 }

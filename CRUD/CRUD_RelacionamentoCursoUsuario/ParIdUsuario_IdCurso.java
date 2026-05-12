@@ -6,29 +6,26 @@ import aed3.RegistroArvoreBMais;
 public class ParIdUsuario_IdCurso implements RegistroArvoreBMais<ParIdUsuario_IdCurso> {
 
     private int idUsuario;
-    private String codigoCurso;
+    private int idCurso;
+    private int idRelacionamento;
     private String nomeUsuario;
 
-    private final short TAMANHO = 104; // 4 bytes (int) + 20 bytes (String 10 chars) + 80 bytes (String 40 chars)
+    private final short TAMANHO = 92; // 4 bytes (int) + 4 bytes (int) + 4 bytes (int) + 80 bytes (String 40 chars)
 
     public ParIdUsuario_IdCurso() {
-        this(-1, "", "");
+        this(-1, -1, -1, "");
     }
 
-    public ParIdUsuario_IdCurso(int idUsuario, String codigoCurso, String nomeUsuario) {
+    public ParIdUsuario_IdCurso(int idUsuario, int idCurso, int idRelacionamento, String nomeUsuario) {
         this.idUsuario = idUsuario;
-        this.codigoCurso = ajustarCodigo(codigoCurso);
+        this.idCurso = idCurso;
+        this.idRelacionamento = idRelacionamento;
         this.nomeUsuario = ajustarString(nomeUsuario);
     }
-
-    private String ajustarCodigo(String s) {
-        if (s == null)
-            s = "";
-        if (s.length() > 10)
-            return s.substring(0, 10);
-        while (s.length() < 10)
-            s += " ";
-        return s;
+    
+    // Construtor compatível para buscas no índice (idRelacionamento = -1)
+    public ParIdUsuario_IdCurso(int idUsuario, int idCurso, String nomeUsuario) {
+        this(idUsuario, idCurso, -1, nomeUsuario);
     }
 
     private String ajustarString(String s) {
@@ -45,8 +42,12 @@ public class ParIdUsuario_IdCurso implements RegistroArvoreBMais<ParIdUsuario_Id
         return idUsuario;
     }
 
-    public String getCodigoCurso() {
-        return codigoCurso.trim();
+    public int getIdCurso() {
+        return idCurso;
+    }
+
+    public int getIdRelacionamento() {
+        return idRelacionamento;
     }
 
     public String getNomeUsuario() {
@@ -64,11 +65,8 @@ public class ParIdUsuario_IdCurso implements RegistroArvoreBMais<ParIdUsuario_Id
         DataOutputStream dos = new DataOutputStream(baos);
 
         dos.writeInt(idUsuario);
-
-        String cod = ajustarCodigo(codigoCurso);
-        for (int i = 0; i < 10; i++) {
-            dos.writeChar(cod.charAt(i));
-        }
+        dos.writeInt(idCurso);
+        dos.writeInt(idRelacionamento);
 
         String s = ajustarString(nomeUsuario);
         for (int i = 0; i < 40; i++) {
@@ -84,12 +82,8 @@ public class ParIdUsuario_IdCurso implements RegistroArvoreBMais<ParIdUsuario_Id
         DataInputStream dis = new DataInputStream(bais);
 
         idUsuario = dis.readInt();
-
-        char[] cod = new char[10];
-        for (int i = 0; i < 10; i++) {
-            cod[i] = dis.readChar();
-        }
-        codigoCurso = new String(cod);
+        idCurso = dis.readInt();
+        idRelacionamento = dis.readInt();
 
         char[] c = new char[40];
         for (int i = 0; i < 40; i++) {
@@ -103,14 +97,21 @@ public class ParIdUsuario_IdCurso implements RegistroArvoreBMais<ParIdUsuario_Id
         if (this.idUsuario != a.idUsuario) {
             return Integer.compare(this.idUsuario, a.idUsuario);
         }
-        if (!this.codigoCurso.trim().equals(a.codigoCurso.trim())) {
-            return this.codigoCurso.trim().compareToIgnoreCase(a.codigoCurso.trim());
+        // Partial search match
+        if (this.idCurso == -1 || a.idCurso == -1) {
+            return 0;
+        }
+        if (this.idCurso != a.idCurso) {
+            return Integer.compare(this.idCurso, a.idCurso);
+        }
+        if (this.idRelacionamento != -1 && a.idRelacionamento != -1 && this.idRelacionamento != a.idRelacionamento) {
+            return Integer.compare(this.idRelacionamento, a.idRelacionamento);
         }
         return this.nomeUsuario.trim().compareToIgnoreCase(a.nomeUsuario.trim());
     }
 
     @Override
     public ParIdUsuario_IdCurso clone() {
-        return new ParIdUsuario_IdCurso(this.idUsuario, this.codigoCurso, this.nomeUsuario);
+        return new ParIdUsuario_IdCurso(this.idUsuario, this.idCurso, this.idRelacionamento, this.nomeUsuario);
     }
 }
