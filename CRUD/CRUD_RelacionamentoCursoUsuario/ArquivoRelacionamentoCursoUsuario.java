@@ -34,7 +34,6 @@ public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<Relacionamen
         ArrayList<ParIdUsuario_IdCurso> pares = indiceIdUsuario.read(new ParIdUsuario_IdCurso(idUsuario, -1, ""));
 
         for (ParIdUsuario_IdCurso p : pares) {
-            // FIX: Usa o ID do relacionamento para carregar o registro completo do Arquivo.
             RelacionamentoCursoUsuario c = super.read(p.getIdRelacionamento());
             if (c != null) {
                 relacionamentos.add(c);
@@ -48,7 +47,6 @@ public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<Relacionamen
         ArrayList<ParIdCurso_IdUsuario> pares = indiceIdCurso.read(new ParIdCurso_IdUsuario(idCurso, -1, ""));
 
         for (ParIdCurso_IdUsuario p : pares) {
-            // FIX: Usa o ID do relacionamento para carregar o registro completo do Arquivo.
             RelacionamentoCursoUsuario c = super.read(p.getIdRelacionamento());
             if (c != null) {
                 relacionamentos.add(c);
@@ -98,8 +96,9 @@ public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<Relacionamen
     public int create(RelacionamentoCursoUsuario c) throws Exception {
         int id = super.create(c);
         c.setId(id); // Garante que o ID do relacionamento está configurado
-        
-        // Inclui o id (idRelacionamento) nos índices B+ para possibilitar buscas posteriores
+
+        // Inclui o id (idRelacionamento) nos índices B+ para possibilitar buscas
+        // posteriores
         indiceIdUsuario.create(new ParIdUsuario_IdCurso(c.getIdUsuario(), c.getIdCurso(), id, c.getNomeUsuario()));
         indiceIdCurso.create(new ParIdCurso_IdUsuario(c.getIdCurso(), c.getIdUsuario(), id, c.getNomeCurso()));
         return id;
@@ -135,9 +134,11 @@ public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<Relacionamen
 
                 // Inserir usando as chaves novas e o ID do relacionamento
                 indiceIdUsuario.create(new ParIdUsuario_IdCurso(novoRelacionamento.getIdUsuario(),
-                        novoRelacionamento.getIdCurso(), novoRelacionamento.getId(), novoRelacionamento.getNomeUsuario()));
+                        novoRelacionamento.getIdCurso(), novoRelacionamento.getId(),
+                        novoRelacionamento.getNomeUsuario()));
                 indiceIdCurso.create(new ParIdCurso_IdUsuario(novoRelacionamento.getIdCurso(),
-                        novoRelacionamento.getIdUsuario(), novoRelacionamento.getId(), novoRelacionamento.getNomeCurso()));
+                        novoRelacionamento.getIdUsuario(), novoRelacionamento.getId(),
+                        novoRelacionamento.getNomeCurso()));
             }
             return true;
         }
