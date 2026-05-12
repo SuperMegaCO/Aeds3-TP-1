@@ -50,7 +50,27 @@ public class ParCodigoID implements RegistroHashExtensivel<ParCodigoID> {
             return;
         }
         String[] partes = s.split(";");
-        codigo = partes[0];
-        id = Integer.parseInt(partes[1].trim());
+        if (partes.length < 2) {
+            codigo = "";
+            id = -1;
+            return;
+        }
+
+        String first = partes[0].trim();
+        String second = partes[1].trim();
+
+        if (first.matches("^-?\\d+$") && !second.matches("^-?\\d+$")) {
+            // Suporte a formato antigo ou invertido: id;codigo
+            id = Integer.parseInt(first);
+            codigo = second;
+        } else if (!first.matches("^-?\\d+$") && second.matches("^-?\\d+$")) {
+            // Formato esperado: codigo;id
+            codigo = first;
+            id = Integer.parseInt(second);
+        } else {
+            // Não é possível interpretar com segurança; marca como inválido.
+            codigo = "";
+            id = -1;
+        }
     }
 }
