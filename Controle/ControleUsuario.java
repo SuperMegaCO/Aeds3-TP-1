@@ -62,12 +62,20 @@ public class ControleUsuario {
             Usuario u = arqUsuarios.read(idUsuario);
             System.out.println("Nome  : " + u.getNome());
             System.out.println("E-mail: " + u.getEmail());
-            System.out.println("\n(E) Excluir minha conta");
+            System.out.println("\n(A) Alterar meus dados");
+            System.out.println("(E) Excluir minha conta");
             System.out.println("(R) Retornar ao menu anterior");
             System.out.print("\nOpção: ");
             String input = console.nextLine();
             char op = input.length() > 0 ? Character.toUpperCase(input.charAt(0)) : ' ';
-            if (op == 'E') {
+            if (op == 'A') {
+                Usuario updated = visUsuario.editarUsuario(u);
+                if (arqUsuarios.update(updated)) {
+                    System.out.println("Dados alterados com sucesso.");
+                } else {
+                    System.out.println("Erro ao alterar dados.");
+                }
+            } else if (op == 'E') {
                 CRUD_Curso.ArquivoCurso arqCursos = new CRUD_Curso.ArquivoCurso();
                 ArrayList<CRUD_Curso.Curso> cursos = arqCursos.readCursosDoUsuario(idUsuario);
                 boolean hasActive = false;
@@ -94,5 +102,30 @@ public class ControleUsuario {
             System.out.println("Erro ao abrir dados: " + e.getMessage());
         }
         return false;
+    }
+
+    public void RecuperarSenha() {
+        System.out.println("\n\nAEDsIII TP1 1:N");
+        System.out.println("-------");
+        System.out.println("> Inicio > Recuperar Senha");
+        System.out.print("E-mail: ");
+        String email = console.nextLine();
+        try {
+            Usuario u = arqUsuarios.read(email);
+            if (u == null) {
+                System.out.println("Usuário não encontrado.");
+                return;
+            }
+            System.out.println("Pergunta secreta: " + u.getPerguntaSecreta());
+            System.out.print("Resposta: ");
+            String resposta = console.nextLine();
+            if (u.getHashRespostaSecreta().equals(resposta)) {
+                System.out.println("Sua senha é: " + u.getHashSenha());
+            } else {
+                System.out.println("Resposta incorreta.");
+            }
+        } catch (Exception e) {
+            System.out.println("Erro ao recuperar senha: " + e.getMessage());
+        }
     }
 }

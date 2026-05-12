@@ -18,7 +18,8 @@ public class Principal {
             System.out.println("> Início");
             if (currentUserId == -1) {
                 System.out.println("\n(A) - Login");
-                System.out.println("(B) - Novo usuario\n");
+                System.out.println("(B) - Novo usuario");
+                System.out.println("(C) - Recuperar senha\n");
                 System.out.println("(S) - Sair");
 
                 System.out.print("\nOpção: ");
@@ -35,6 +36,9 @@ public class Principal {
                         break;
                     case 'B':
                         currentUserId = (new ControleUsuario()).NewUserMenu();
+                        break;
+                    case 'C':
+                        (new ControleUsuario()).RecuperarSenha();
                         break;
                     default:
                         System.out.println("Opção inválida!");
