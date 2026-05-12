@@ -1,6 +1,8 @@
 import java.util.Scanner;
 
 import Controle.ControleUsuario;
+import Controle.CursoController;
+import Controle.InscricoesController;
 
 public class Principal {
 
@@ -8,6 +10,9 @@ public class Principal {
 
         Scanner console;
         int currentUserId = -1;
+        ControleUsuario controleUsuario = new ControleUsuario();
+        CursoController cursoController = new CursoController();
+        InscricoesController inscricoesController = new InscricoesController();
 
         console = new Scanner(System.in);
         char opcao = ' ';
@@ -32,13 +37,15 @@ public class Principal {
 
                 switch (opcao) {
                     case 'A':
-                        currentUserId = (new ControleUsuario()).Login();
+                        currentUserId = controleUsuario.Login();
                         break;
                     case 'B':
-                        currentUserId = (new ControleUsuario()).NewUserMenu();
+                        currentUserId = controleUsuario.NewUserMenu();
                         break;
                     case 'C':
-                        (new ControleUsuario()).RecuperarSenha();
+                        controleUsuario.RecuperarSenha();
+                        break;
+                    case 'S':
                         break;
                     default:
                         System.out.println("Opção inválida!");
@@ -47,6 +54,7 @@ public class Principal {
             } else {
                 System.out.println("\n(C) - Meus dados");
                 System.out.println("(D) - Meus cursos");
+                System.out.println("(E) - Minhas inscricoes");
                 System.out.println("(S) - Deslogar");
                 System.out.print("\nOpção: ");
                 try {
@@ -58,7 +66,7 @@ public class Principal {
                 switch (opcao) {
                     case 'C':
                         try {
-                            boolean deleted = new Controle.ControleUsuario().MeusDadosMenu(currentUserId);
+                            boolean deleted = controleUsuario.MeusDadosMenu(currentUserId);
                             if (deleted) {
                                 currentUserId = -1;
                                 opcao = ' ';
@@ -69,14 +77,14 @@ public class Principal {
                         break;
                     case 'D':
                         try {
-                            new Controle.CursoController().menuCursos(currentUserId);
+                            cursoController.menuCursos(currentUserId);
                         } catch (Exception e) {
                             System.out.println("Erro ao abrir cursos: " + e.getMessage());
                         }
                         break;
                     case 'E':
                         try {
-                            new Controle.InscricaoController().menuInscricoes(currentUserId);
+                            inscricoesController.menuInscricoes(currentUserId);
                         } catch (Exception e) {
                             System.out.println("Erro ao abrir inscricoes: " + e.getMessage());
                         }
