@@ -5,20 +5,30 @@ import aed3.RegistroArvoreBMais;
 
 public class ParIdCurso_IdUsuario implements RegistroArvoreBMais<ParIdCurso_IdUsuario> {
 
-    private int idCurso;
+    private String codigoCurso;
     private int idUsuario;
     private String nomeCurso;
 
-    private final short TAMANHO = 88; // 4 bytes (int) + 4 bytes (int) + 80 bytes (String 40 chars)
+    private final short TAMANHO = 104; // 20 bytes (String 10 chars) + 4 bytes (int) + 80 bytes (String 40 chars)
 
     public ParIdCurso_IdUsuario() {
-        this(-1, -1, "");
+        this("", -1, "");
     }
 
-    public ParIdCurso_IdUsuario(int idCurso, int idUsuario, String nomeCurso) {
-        this.idCurso = idCurso;
+    public ParIdCurso_IdUsuario(String codigoCurso, int idUsuario, String nomeCurso) {
+        this.codigoCurso = ajustarCodigo(codigoCurso);
         this.idUsuario = idUsuario;
         this.nomeCurso = ajustarString(nomeCurso);
+    }
+
+    private String ajustarCodigo(String s) {
+        if (s == null)
+            s = "";
+        if (s.length() > 10)
+            return s.substring(0, 10);
+        while (s.length() < 10)
+            s += " ";
+        return s;
     }
 
     private String ajustarString(String s) {
@@ -31,8 +41,8 @@ public class ParIdCurso_IdUsuario implements RegistroArvoreBMais<ParIdCurso_IdUs
         return s;
     }
 
-    public int getIdCurso() {
-        return idCurso;
+    public String getCodigoCurso() {
+        return codigoCurso.trim();
     }
 
     public int getIdUsuario() {
@@ -53,7 +63,10 @@ public class ParIdCurso_IdUsuario implements RegistroArvoreBMais<ParIdCurso_IdUs
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
 
-        dos.writeInt(idCurso);
+        String cod = ajustarCodigo(codigoCurso);
+        for (int i = 0; i < 10; i++) {
+            dos.writeChar(cod.charAt(i));
+        }
         dos.writeInt(idUsuario);
 
         String s = ajustarString(nomeCurso);
@@ -69,7 +82,11 @@ public class ParIdCurso_IdUsuario implements RegistroArvoreBMais<ParIdCurso_IdUs
         ByteArrayInputStream bais = new ByteArrayInputStream(ba);
         DataInputStream dis = new DataInputStream(bais);
 
-        idCurso = dis.readInt();
+        char[] cod = new char[10];
+        for (int i = 0; i < 10; i++) {
+            cod[i] = dis.readChar();
+        }
+        codigoCurso = new String(cod);
         idUsuario = dis.readInt();
 
         char[] c = new char[40];
@@ -81,8 +98,8 @@ public class ParIdCurso_IdUsuario implements RegistroArvoreBMais<ParIdCurso_IdUs
 
     @Override
     public int compareTo(ParIdCurso_IdUsuario a) {
-        if (this.idCurso != a.idCurso) {
-            return Integer.compare(this.idCurso, a.idCurso);
+        if (!this.codigoCurso.trim().equals(a.codigoCurso.trim())) {
+            return this.codigoCurso.trim().compareToIgnoreCase(a.codigoCurso.trim());
         }
         if (this.idUsuario != a.idUsuario) {
             return Integer.compare(this.idUsuario, a.idUsuario);
@@ -92,6 +109,6 @@ public class ParIdCurso_IdUsuario implements RegistroArvoreBMais<ParIdCurso_IdUs
 
     @Override
     public ParIdCurso_IdUsuario clone() {
-        return new ParIdCurso_IdUsuario(this.idCurso, this.idUsuario, this.nomeCurso);
+        return new ParIdCurso_IdUsuario(this.codigoCurso, this.idUsuario, this.nomeCurso);
     }
 }

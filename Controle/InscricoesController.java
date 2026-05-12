@@ -2,6 +2,8 @@ package Controle;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import CRUD_Curso.*;
+import Visao.VisaoInscricao.*;
 import aed3.*;
 import CRUD_RelacionamentoCursoUsuario.*;
 import aed3.ArvoreBMais;
@@ -14,16 +16,21 @@ public class InscricoesController {
         crud = new ArquivoRelacionamentoCursoUsuario();
     }
 
-    public void listarInscricoesUsuario(int idUsuario) throws Exception {
+    public void listarInscricoesDoUsuario(int idUsuario) throws Exception {
         java.util.ArrayList<RelacionamentoCursoUsuario> Inscricoes = crud.readUsuariosDoCurso(idUsuario);
         System.out.println("\nInscricoes");
         if (Inscricoes.isEmpty()) {
-            System.out.println("Nenhum Inscricoes encontrado.");
+            System.out.println("Nenhumas inscricoes encontradas.");
             return;
         }
         for (int i = 0; i < Inscricoes.size(); i++) {
             RelacionamentoCursoUsuario c = Inscricoes.get(i);
-            System.out.println("(" + (i + 1) + ") " + c.getNomeCurso());
+            if (new ArquivoCurso().read(c.getIdCurso()).getEstado() != 1) {
+                System.out.println("(" + (i + 1) + ") " + c.getNomeCurso() + " - " + c.getDataInscricao());
+            } else {
+                System.out.println("(" + (i + 1) + ") " + c.getNomeCurso() + " - " + c.getDataInscricao()
+                        + "(INSCRIÇÕES ENCERRADAS)");
+            }
         }
     }
 
@@ -31,84 +38,69 @@ public class InscricoesController {
         java.util.ArrayList<RelacionamentoCursoUsuario> Inscricoes = crud.readUsuariosDoCurso(idCurso);
         System.out.println("\nInscricoes");
         if (Inscricoes.isEmpty()) {
-            System.out.println("Nenhum Inscricoes encontrado.");
+            System.out.println("Nenhuma inscricao encontrada.");
             return;
         }
         for (int i = 0; i < Inscricoes.size(); i++) {
             RelacionamentoCursoUsuario c = Inscricoes.get(i);
-            System.out.println("(" + (i + 1) + ") " + c.getNomeCurso());
+            System.out.println("(" + (i + 1) + ") " + c.getNomeUsuario());
         }
     }
 
-    /*
-     * public void menuInscricoes(int idUsuario) throws Exception {
-     * Visao.VisaoInscricoes.VisaoInscricoes visao = new
-     * Visao.VisaoInscricoes.VisaoInscricoes();
-     * char opcao;
-     * do {
-     * java.util.ArrayList<RelacionamentoCursoUsuario> Inscricoes =
-     * crud.readRelacionamentoCursoUsuarioDoUsuario(idUsuario);
-     * System.out.println("\n> Início > Meus Inscricoes\n\nInscricoes");
-     * if (Inscricoes.isEmpty()) {
-     * System.out.println("Nenhum Inscricoes encontrado.");
-     * } else {
-     * for (int i = 0; i < Inscricoes.size(); i++) {
-     * Inscricoes c = Inscricoes.get(i);
-     * System.out.println("(" + (i + 1) + ") " + c.getNome() + " - " +
-     * c.getDataInicio());
-     * }
-     * }
-     * 
-     * opcao = visao.menuMeusInscricoes();
-     * if (opcao == 'A') {
-     * Inscricoes novo = visao.lerInscricoes();
-     * novo.setIdUsuario(idUsuario);
-     * crud.create(novo);
-     * System.out.println("Inscricoes criado!");
-     * } else if (opcao >= '1' && opcao <= '9') {
-     * int index = opcao - '1';
-     * if (index >= 0 && index < Inscricoes.size()) {
-     * menuInscricoesDetalhes(Inscricoes.get(index), visao);
-     * }
-     * }
-     * } while (opcao != 'R');
-     * }
-     * 
-     * private void menuInscricoesDetalhes(Inscricoes c,
-     * Visao.VisaoInscricoes.VisaoInscricoes visao) throws Exception {
-     * char op;
-     * do {
-     * visao.mostraInscricoes(c);
-     * op = visao.menuInscricoesDetalhes();
-     * switch (op) {
-     * case 'B':
-     * Inscricoes atualizado = visao.lerInscricoes();
-     * atualizado.setId(c.getId());
-     * atualizado.setIdUsuario(c.getIdUsuario());
-     * atualizado.setCodigo(c.getCodigo());
-     * atualizado.setEstado(c.getEstado());
-     * crud.update(atualizado);
-     * c = atualizado;
-     * break;
-     * case 'C':
-     * c.setEstado(1);
-     * crud.update(c);
-     * System.out.println("Inscrições encerradas.");
-     * break;
-     * case 'D':
-     * c.setEstado(2);
-     * crud.update(c);
-     * System.out.println("Inscricoes concluído.");
-     * break;
-     * case 'E':
-     * c.setEstado(3);
-     * crud.update(c);
-     * System.out.println("Inscricoes cancelado.");
-     * break;
-     * }
-     * } while (op != 'R');
-     * }
-     */
+    public void menuInscricoes(int idUsuario) throws Exception {
+        VisaoInscricoes visao = new VisaoInscricoes();
+        char opcao;
+        do {
+            listarInscricoesDoUsuario(idUsuario);
+
+            opcao = visao.menuMinhasInscricoes();
+            if (opcao == 'A') {
+                String codigo = visao.buscaPorCodigo_GetCodigo();
+                
+                System.out.println("Inscricoes criado!");
+            } else if (opcao >= '1' && opcao <= '9') {
+                int index = opcao - '1';
+                if (index >= 0 && index < Inscricoes.size()) {
+                    menuInscricoesDetalhes(Inscricoes.get(index), visao);
+                }
+            }
+        } while (opcao != 'R');
+    }
+
+    private void menuInscricoesDetalhes(Inscricoes c,
+            VisaoInscricoes visao) throws Exception {
+        char op;
+        do {
+            visao.mostraInscricoes(c);
+            op = visao.menuInscricoesDetalhes();
+            switch (op) {
+                case 'B':
+                    Inscricoes atualizado = visao.lerInscricoes();
+                    atualizado.setId(c.getId());
+                    atualizado.setIdUsuario(c.getIdUsuario());
+                    atualizado.setCodigo(c.getCodigo());
+                    atualizado.setEstado(c.getEstado());
+                    crud.update(atualizado);
+                    c = atualizado;
+                    break;
+                case 'C':
+                    c.setEstado(1);
+                    crud.update(c);
+                    System.out.println("Inscrições encerradas.");
+                    break;
+                case 'D':
+                    c.setEstado(2);
+                    crud.update(c);
+                    System.out.println("Inscricoes concluído.");
+                    break;
+                case 'E':
+                    c.setEstado(3);
+                    crud.update(c);
+                    System.out.println("Inscricoes cancelado.");
+                    break;
+            }
+        } while (op != 'R');
+    }
 
     public void criarInscricao(int idUsuario, int idCurso, String nomeCurso, String nomeUsuario) throws Exception {
 

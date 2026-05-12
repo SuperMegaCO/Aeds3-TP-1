@@ -2,6 +2,7 @@ package CRUD_RelacionamentoCursoUsuario;
 
 import java.util.ArrayList;
 import aed3.ArvoreBMais;
+import CRUD_Curso.*;
 
 public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<RelacionamentoCursoUsuario> {
 
@@ -10,10 +11,10 @@ public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<Relacionamen
 
     public ArrayList<RelacionamentoCursoUsuario> readCursosDoUsuario(int idUsuario) throws Exception {
         ArrayList<RelacionamentoCursoUsuario> relacionamentos = new ArrayList<>();
-        ArrayList<ParIdUsuario_IdCurso> pares = indiceIdUsuario.read(new ParIdUsuario_IdCurso(idUsuario, -1, ""));
+        ArrayList<ParIdUsuario_IdCurso> pares = indiceIdUsuario.read(new ParIdUsuario_IdCurso(idUsuario, "", ""));
 
         for (ParIdUsuario_IdCurso p : pares) {
-            RelacionamentoCursoUsuario c = super.read(p.getIdCurso());
+            RelacionamentoCursoUsuario c = new Rel);
             if (c != null) {
                 relacionamentos.add(c);
             }

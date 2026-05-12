@@ -111,6 +111,11 @@ public class CursoController {
             System.out.println("Curso não encontrado.");
     }
 
+    public Curso buscarCurso(String codigo) throws Exception {
+        Curso c = crud.read(codigo);
+        return c;
+    }
+
     public void atualizarCurso(Curso c) throws Exception {
         if (crud.update(c))
             System.out.println("Curso atualizado!");

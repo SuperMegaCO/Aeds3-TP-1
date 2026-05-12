@@ -32,6 +32,8 @@ public class RelacionamentoCursoUsuario implements Registro {
         this.dataInscricao = dataInscricao;
         this.idCurso = idCurso;
         this.idUsuario = idUsuario;
+        this.nomeCurso = nomeCurso;
+        this.nomeUsuario = nomeUsuario;
     }
 
     public void setId(int id) {
@@ -56,6 +58,8 @@ public class RelacionamentoCursoUsuario implements Registro {
         dos.writeInt((int) this.dataInscricao.toEpochDay());
         dos.writeInt(this.idCurso);
         dos.writeInt(this.idUsuario);
+        dos.writeUTF(this.nomeCurso);
+        dos.writeUTF(this.nomeUsuario);
         return baos.toByteArray();
     }
 
@@ -67,6 +71,8 @@ public class RelacionamentoCursoUsuario implements Registro {
         this.dataInscricao = LocalDate.ofEpochDay(dis.readInt());
         this.idCurso = dis.readInt();
         this.idUsuario = dis.readInt();
+        this.nomeCurso = dis.readUTF();
+        this.nomeUsuario = dis.readUTF();
     }
 
     public int getIdCurso() {

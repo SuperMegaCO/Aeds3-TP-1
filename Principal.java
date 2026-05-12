@@ -47,7 +47,6 @@ public class Principal {
             } else {
                 System.out.println("\n(C) - Meus dados");
                 System.out.println("(D) - Meus cursos");
-                System.out.println("(E) - Minhas inscricoes");
                 System.out.println("(S) - Deslogar");
                 System.out.print("\nOpção: ");
                 try {
