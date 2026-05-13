@@ -82,8 +82,9 @@ public class InscricoesController {
 
             // Menu
             System.out.println("\n(A) Buscar curso por código");
-            System.out.println("\n(B) Buscar curso por palavras-chave");
+            System.out.println("(B) Buscar curso por palavras-chave");
             System.out.println("(C) Listar todos os cursos");
+            System.out.println();
             if (!inscricoesAtivas.isEmpty()) {
                 System.out.println("Ou digite o número da inscrição para ver detalhes");
             }
@@ -115,17 +116,7 @@ public class InscricoesController {
                         // Implementar busca por palavras-chave se necessário
                         System.out.println("Busca por palavras-chave - não implementado ainda. Apenas no tp3");
                     } else if (opcao == 'C') {
-                        ArrayList<CRUD_Curso.Curso> cursos = arqCursos.readAllCursosOrdenadosPorData();
-                        if (cursos.isEmpty()) {
-                            System.out.println("Nenhum curso encontrado.");
-                        } else {
-                            System.out.println("\nTodos os Cursos:");
-                            for (int i = 0; i < cursos.size(); i++) {
-                                CRUD_Curso.Curso c = cursos.get(i);
-                                String estadoStr = c.getEstado() == 0 ? "Inscrições abertas" : "Inscrições encerradas";
-                                System.out.println("(" + (i + 1) + ") " + c.getNome() + " - Código: " + c.getCodigo() + " (" + estadoStr + ")");
-                            }
-                        }
+                        menuListarCursosPaginado(arqCursos);
                     } else if (opcao != 'R') {
                         System.out.println("Opção inválida!");
                     }
@@ -163,6 +154,135 @@ public class InscricoesController {
                     crud.delete(c.getIdUsuario(), c.getIdCurso());
                     System.out.println("Inscrição cancelada.");
                     return; // sair do menu de detalhes
+                case 'R':
+                    break;
+                default:
+                    System.out.println("Opção inválida!");
+            }
+        } while (op != 'R');
+    }
+
+    private void menuListarCursosPaginado(CRUD_Curso.ArquivoCurso arqCursos) throws Exception {
+        final int ITENS_POR_PAGINA = 10;
+        int paginaAtual = 1;
+        int totalCursos = arqCursos.contarTotalCursos();
+        int totalPaginas = (int) Math.ceil((double) totalCursos / ITENS_POR_PAGINA);
+
+        char op;
+        do {
+            // Mostrar cabeçalho
+            System.out.println("\nEntrePares 1.0");
+            System.out.println("--------------");
+            System.out.println("> Início > Minhas inscrições > Lista de cursos");
+            System.out.println("\nPágina " + paginaAtual + " de " + Math.max(1, totalPaginas));
+
+            // Carregar cursos da página atual
+            ArrayList<CRUD_Curso.Curso> cursos = arqCursos.readCursosPaginados(paginaAtual, ITENS_POR_PAGINA);
+
+            // Mostrar cursos
+            for (int i = 0; i < cursos.size(); i++) {
+                CRUD_Curso.Curso c = cursos.get(i);
+                System.out.println("(" + (i + 1) + ") " + c.getNome() + " - " + c.getDataInicio());
+            }
+
+            // Mostrar opções de navegação
+            System.out.println("\nDigite o número do curso para ver detalhes");
+            System.out.println("\n(A) Página anterior");
+            System.out.println("(B) Próxima página");
+            System.out.println("(R) Retornar ao menu anterior");
+            System.out.print("Opção: ");
+
+            String input = new java.util.Scanner(System.in).nextLine();
+            op = input.length() > 0 ? Character.toUpperCase(input.charAt(0)) : ' ';
+
+            // Verificar se é um número (seleção de curso)
+            if (Character.isDigit(op)) {
+                int index = op - '1'; // '1' = 0, '2' = 1, etc.
+                if (index >= 0 && index < cursos.size()) {
+                    menuDetalhesCurso(cursos.get(index), arqCursos);
+                    op = ' '; // continuar no loop
+                } else {
+                    System.out.println("Número inválido!");
+                    op = ' ';
+                }
+            } else {
+                switch (op) {
+                    case 'A':
+                        if (paginaAtual > 1) {
+                            paginaAtual--;
+                        } else {
+                            System.out.println("Você já está na primeira página.");
+                        }
+                        break;
+                    case 'B':
+                        if (paginaAtual < totalPaginas) {
+                            paginaAtual++;
+                        } else {
+                            System.out.println("Você já está na última página.");
+                        }
+                        break;
+                    case 'R':
+                        break;
+                    default:
+                        System.out.println("Opção inválida!");
+                }
+            }
+        } while (op != 'R');
+    }
+
+    private void menuDetalhesCurso(CRUD_Curso.Curso curso, CRUD_Curso.ArquivoCurso arqCursos) throws Exception {
+        // Buscar nome do autor
+        String autorNome = "Desconhecido";
+        try {
+            CRUD_Usuario.ArquivoUsuario arqUsuarios = new CRUD_Usuario.ArquivoUsuario();
+            CRUD_Usuario.Usuario u = arqUsuarios.read(curso.getIdUsuario());
+            if (u != null) {
+                autorNome = u.getNome();
+            }
+        } catch (Exception e) {
+            // Ignorar erro
+        }
+
+        char op;
+        do {
+            // Mostrar cabeçalho
+            System.out.println("\nEntrePares 1.0");
+            System.out.println("--------------");
+            System.out.println("> Início > Minhas inscrições > Lista de cursos > " + curso.getNome());
+
+            // Mostrar detalhes do curso
+            System.out.println("\nCÓDIGO........: " + curso.getCodigo());
+            System.out.println("CURSO.........: " + curso.getNome());
+            System.out.println("AUTOR.........: " + autorNome);
+            System.out.println("DESCRIÇÃO.....: " + curso.getDescricao());
+            System.out.println("DATA DE INÍCIO: " + curso.getDataInicio());
+
+            // Verificar estado do curso
+            String estadoMsg = "";
+            if (curso.getEstado() == 0) {
+                estadoMsg = "\n(A) Fazer minha inscrição no curso";
+            } else if (curso.getEstado() == 1) {
+                estadoMsg = "\n(A) Fazer minha inscrição no curso (inscrições encerradas)";
+            } else {
+                estadoMsg = "\n(Curso não disponível para inscrição)";
+            }
+
+            System.out.println(estadoMsg);
+            System.out.println("(R) Retornar ao menu anterior");
+            System.out.print("Opção: ");
+
+            String input = new java.util.Scanner(System.in).nextLine();
+            op = input.length() > 0 ? Character.toUpperCase(input.charAt(0)) : ' ';
+
+            switch (op) {
+                case 'A':
+                    if (curso.getEstado() == 0) {
+                        // Implementar inscrição - por enquanto apenas mensagem
+                        System.out.println("Funcionalidade de inscrição será implementada em breve.");
+                    } else {
+                        System.out.println("Inscrições encerradas para este curso.");
+                    }
+                    break;
                 case 'R':
                     break;
                 default:

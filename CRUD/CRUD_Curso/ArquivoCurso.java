@@ -178,4 +178,29 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
         cursos.sort((c1, c2) -> c1.getDataInicio().compareTo(c2.getDataInicio()));
         return cursos;
     }
+
+    // ========================
+    // READ CURSOS PAGINADOS
+    // ========================
+    public ArrayList<Curso> readCursosPaginados(int pagina, int itensPorPagina) throws Exception {
+        ArrayList<Curso> todosCursos = readAllCursosOrdenadosPorData();
+        ArrayList<Curso> paginaCursos = new ArrayList<>();
+        
+        int inicio = (pagina - 1) * itensPorPagina;
+        int fim = Math.min(inicio + itensPorPagina, todosCursos.size());
+        
+        for (int i = inicio; i < fim; i++) {
+            paginaCursos.add(todosCursos.get(i));
+        }
+        
+        return paginaCursos;
+    }
+
+    // ========================
+    // CONTAR TOTAL DE CURSOS
+    // ========================
+    public int contarTotalCursos() throws Exception {
+        ArrayList<Curso> todosCursos = readAllCursosOrdenadosPorData();
+        return todosCursos.size();
+    }
 }
