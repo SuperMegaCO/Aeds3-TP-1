@@ -7,7 +7,7 @@ import java.lang.reflect.Constructor;
 
 public class Arquivo<T extends Registro> {
     final int TAM_CABECALHO = 12;
-    RandomAccessFile arquivo;
+    protected RandomAccessFile arquivo;
     String nomeArquivo;
     Constructor<T> construtor;
     HashExtensivel<ParIDEndereco> indiceDireto;
@@ -36,6 +36,11 @@ public class Arquivo<T extends Registro> {
             ".\\dados\\"+na+"\\"+na+".d.db", // diretório 
             ".\\dados\\"+na+"\\"+na+".c.db"  // cestos
         );
+    }
+
+    protected int getUltimoID() throws Exception {
+        arquivo.seek(0);
+        return arquivo.readInt();
     }
 
     public int create(T obj) throws Exception {

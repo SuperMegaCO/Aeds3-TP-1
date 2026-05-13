@@ -31,7 +31,7 @@ public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<Relacionamen
 
     public ArrayList<RelacionamentoCursoUsuario> readCursosDoUsuario(int idUsuario) throws Exception {
         ArrayList<RelacionamentoCursoUsuario> relacionamentos = new ArrayList<>();
-        ArrayList<ParIdUsuario_IdCurso> pares = indiceIdUsuario.read(new ParIdUsuario_IdCurso(idUsuario, -1, ""));
+        ArrayList<ParIdUsuario_IdCurso> pares = indiceIdUsuario.read(new ParIdUsuario_IdCurso(idUsuario, -1, -1, ""));
 
         for (ParIdUsuario_IdCurso p : pares) {
             // FIX: Usa o ID do relacionamento para carregar o registro completo do Arquivo.
@@ -45,7 +45,7 @@ public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<Relacionamen
 
     public ArrayList<RelacionamentoCursoUsuario> readUsuariosDoCurso(int idCurso) throws Exception {
         ArrayList<RelacionamentoCursoUsuario> relacionamentos = new ArrayList<>();
-        ArrayList<ParIdCurso_IdUsuario> pares = indiceIdCurso.read(new ParIdCurso_IdUsuario(idCurso, -1, ""));
+        ArrayList<ParIdCurso_IdUsuario> pares = indiceIdCurso.read(new ParIdCurso_IdUsuario(idCurso, -1, -1, ""));
 
         for (ParIdCurso_IdUsuario p : pares) {
             // FIX: Usa o ID do relacionamento para carregar o registro completo do Arquivo.

@@ -43,9 +43,11 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
     @Override
     public int create(Curso c) throws Exception {
 
-        // gera código automaticamente
+        // gera código automaticamente ou limpa espaços
         if (c.getCodigo() == null || c.getCodigo().isEmpty()) {
             c.setCodigo(GeradorCodigo.gerar());
+        } else {
+            c.setCodigo(c.getCodigo().trim());
         }
 
         int id = super.create(c);
@@ -62,23 +64,40 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
     // READ POR CÓDIGO
     // ========================
     public Curso read(String codigo) throws Exception {
-        ParCodigoID pci = indiceCodigo.read(ParCodigoID.hash(codigo));
-
-        if (pci == null)
-            return null;
-
-        return read(pci.getId());
+        String codigoTrimmed = codigo.trim();
+        
+        // Tenta buscar via índice primeiro
+        ParCodigoID pci = indiceCodigo.read(ParCodigoID.hash(codigoTrimmed));
+        if (pci != null) {
+            return read(pci.getId());
+        }
+        
+        // Fallback: busca linear se o índice não encontrar
+        // Isso garante que funciona mesmo se o índice estiver vazio/inconsistente
+        int id = 1;
+        while (true) {
+            Curso c = super.read(id);
+            if (c == null) {
+                break;
+            }
+            if (c.getCodigo().trim().equals(codigoTrimmed)) {
+                return c;
+            }
+            id++;
+        }
+        
+        return null;
     }
 
     // ========================
     // DELETE POR CÓDIGO
     // ========================
     public boolean delete(String codigo) throws Exception {
-        ParCodigoID pci = indiceCodigo.read(ParCodigoID.hash(codigo));
+        ParCodigoID pci = indiceCodigo.read(ParCodigoID.hash(codigo.trim()));
 
         if (pci != null)
             if (delete(pci.getId()))
-                return indiceCodigo.delete(ParCodigoID.hash(codigo));
+                return indiceCodigo.delete(ParCodigoID.hash(codigo.trim()));
 
         return false;
     }
@@ -95,7 +114,7 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
             if (super.delete(id)) {
 
                 // remove índice código
-                indiceCodigo.delete(ParCodigoID.hash(c.getCodigo()));
+                indiceCodigo.delete(ParCodigoID.hash(c.getCodigo().trim()));
 
                 // remove índice usuário
                 indiceUsuario.delete(
@@ -138,5 +157,25 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
         }
 
         return false;
+    }
+
+    // ========================
+    // READ ALL CURSOS ORDENADOS POR DATA
+    // ========================
+    public ArrayList<Curso> readAllCursosOrdenadosPorData() throws Exception {
+        ArrayList<Curso> cursos = new ArrayList<>();
+        // Ler todos os cursos iterando de 1 até encontrar um null
+        int id = 1;
+        while (true) {
+            Curso c = super.read(id);
+            if (c == null) {
+                break;
+            }
+            cursos.add(c);
+            id++;
+        }
+        // Ordenar por data de início (usando a data de início)
+        cursos.sort((c1, c2) -> c1.getDataInicio().compareTo(c2.getDataInicio()));
+        return cursos;
     }
 }
