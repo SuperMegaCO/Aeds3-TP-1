@@ -2,9 +2,8 @@ package Visao.VisaoCurso;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-
+import TempDataManager.InscritoTempData;
 import CRUD_Curso.Curso;
-import DTO.InscritoDTO;
 
 public class VisaoCurso {
 
@@ -30,8 +29,7 @@ public class VisaoCurso {
                 dataInicio,
                 descricao,
                 "",
-                0
-        );
+                0);
     }
 
     public void mostraCurso(Curso c) {
@@ -43,7 +41,7 @@ public class VisaoCurso {
 
         System.out.print("\nEste curso está ");
 
-        switch(c.getEstado()) {
+        switch (c.getEstado()) {
 
             case 0:
                 System.out.println("aberto para inscrições!");
@@ -112,9 +110,8 @@ public class VisaoCurso {
     // GERENCIAMENTO DE INSCRITOS
     // =====================================================
 
-    public String menuInscritos(
-            ArrayList<InscritoDTO> inscritos
-    ) {
+    public char menuInscritos(
+            ArrayList<InscritoTempData> inscritos) {
 
         System.out.println("\n=== INSCRITOS ===");
 
@@ -126,15 +123,14 @@ public class VisaoCurso {
 
             for (int i = 0; i < inscritos.size(); i++) {
 
-                InscritoDTO dto = inscritos.get(i);
+                InscritoTempData tempData = inscritos.get(i);
 
                 System.out.println(
                         "(" + (i + 1) + ") "
-                        + dto.getNome()
-                        + " ("
-                        + dto.getDataInscricao()
-                        + ")"
-                );
+                                + tempData.getNome()
+                                + " ("
+                                + tempData.getDataInscricao()
+                                + ")");
             }
         }
 
@@ -143,23 +139,32 @@ public class VisaoCurso {
 
         System.out.print("\nOpção: ");
 
-        return console.nextLine();
+        try {
+
+            String input = console.nextLine();
+
+            return input.length() > 0
+                    ? Character.toUpperCase(input.charAt(0))
+                    : ' ';
+
+        } catch (Exception e) {
+            return ' ';
+        }
     }
 
     public char mostrarDetalhesInscrito(
-            InscritoDTO dto
-    ) {
+            TempDataManager.InscritoTempData tempData) {
 
         System.out.println("\n=== DADOS DO ALUNO ===");
 
         System.out.println("Nome........: "
-                + dto.getNome());
+                + tempData.getNome());
 
         System.out.println("Email.......: "
-                + dto.getEmail());
+                + tempData.getEmail());
 
         System.out.println("Inscrição...: "
-                + dto.getDataInscricao());
+                + tempData.getDataInscricao());
 
         System.out.println("\n(A) Cancelar inscrição");
         System.out.println("(R) Retornar");
@@ -180,8 +185,7 @@ public class VisaoCurso {
     }
 
     public void mostrarMensagem(
-            String msg
-    ) {
+            String msg) {
 
         System.out.println("\n" + msg);
     }

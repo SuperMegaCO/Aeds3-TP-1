@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import aed3.*;
 import CRUD_Curso.*;
 import aed3.ArvoreBMais;
+import Visao.VisaoInscricao.*;
+import CRUD_RelacionamentoCursoUsuario.*;
+import CRUD_Usuario.ArquivoUsuario;
+import TempDataManager.InscritoTempData;
 
 public class CursoController {
 
@@ -40,7 +44,7 @@ public class CursoController {
                     System.out.println("(" + (i + 1) + ") " + c.getNome() + " - " + c.getDataInicio());
                 }
             }
-            
+
             opcao = visao.menuMeusCursos();
             if (opcao == 'A') {
                 Curso novo = visao.lerCurso();
@@ -62,6 +66,50 @@ public class CursoController {
             visao.mostraCurso(c);
             op = visao.menuCursoDetalhes();
             switch (op) {
+                case 'A':
+                    InscricoesController ic = new InscricoesController();
+                    ArrayList<InscritoTempData> inscritos = new ArrayList<>();
+                    ArquivoRelacionamentoCursoUsuario rcu = new ArquivoRelacionamentoCursoUsuario();
+                    ArquivoUsuario au = new ArquivoUsuario();
+                    ArrayList<RelacionamentoCursoUsuario> rcuArray = rcu.readUsuariosDoCurso(c.getCodigo());
+                    for (int i = 0; i < rcuArray.size(); i++) {
+                        InscritoTempData itd = new InscritoTempData(rcuArray.get(i).getIdUsuario(),
+                                rcuArray.get(i).getNomeUsuario(), au.read(rcuArray.get(i).getIdUsuario()).getEmail(),
+                                rcuArray.get(i).getDataInscricao());
+                        inscritos.add(itd);
+                    }
+                    do {
+                        char opcao = visao.menuInscritos(inscritos);
+                        if (opcao >= '1' && opcao <= '9') {
+                            int index = opcao - '1';
+                            if (index >= 0 && index < inscritos.size()) {
+                                char detalheOpcao = visao.mostrarDetalhesInscrito(inscritos.get(index));
+                                if (detalheOpcao == 'A') {
+                                    ic.deletarInscricao(c.getId(), inscritos.get(index).getIdUsuario());
+                                    inscritos.remove(index);
+                                } else if (detalheOpcao == 'R') {
+                                    break;
+                                }
+                            }
+                        } else if (opcao == 'A') {
+                            try (java.io.PrintWriter writer = new java.io.PrintWriter(
+                                    new java.io.File("inscritos.csv"))) {
+                                writer.println("Nome,Email,Data de Inscricao");
+
+                                for (InscritoTempData inscrito : inscritos) {
+                                    writer.println(inscrito.getNome() + "," + inscrito.getEmail() + ","
+                                            + inscrito.getDataInscricao());
+                                }
+                                System.out.println("Lista exportada para inscritos.csv com sucesso!");
+
+                            } catch (java.io.FileNotFoundException e) {
+                                System.out.println("Erro ao exportar a lista: " + e.getMessage());
+                            }
+                        } else if (opcao == 'R') {
+                            break;
+                        }
+                    } while (true);
+                    break;
                 case 'B':
                     Curso atualizado = visao.lerCurso();
                     atualizado.setId(c.getId());

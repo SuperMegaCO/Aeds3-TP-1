@@ -2,51 +2,59 @@ package Visao.VisaoInscricao;
 
 import java.util.Scanner;
 import CRUD_Curso.Curso;
+import CRUD_RelacionamentoCursoUsuario.RelacionamentoCursoUsuario;
 
 public class VisaoInscricoes {
-    private static Scanner console = new Scanner(System.in);
+  private static Scanner console = new Scanner(System.in);
 
+  public char menuDetalhes(RelacionamentoCursoUsuario c, CRUD_Curso.Curso curso) {
+    System.out.println("\nEntrePares 1.0");
+    System.out.println("--------------");
+    System.out.println("> Início > Minhas inscrições > " + c.getNomeCurso());
+    System.out.println("\nDetalhes da Inscrição:");
+    System.out.println("Curso: " + c.getNomeCurso());
+    System.out.println("Data de Inscrição: " + c.getDataInscricao());
 
-    public char menuMinhasInscricoes() {
-        System.out.println("(A) Buscar curso por código");
-        System.out.println("(B) Buscar curso por palavras-chave");
-        System.out.println("(C) Listar todos os cursos");
-        System.out.println();
-        System.out.println("(R) Retornar ao menu anterior");
-        System.out.print("Opção: ");
-        try {
-            String input = console.nextLine();
-            return input.length() > 0 ? Character.toUpperCase(input.charAt(0)) : ' ';
-        } catch (Exception e) {
-            return 'R';
-        }
-    }
-    public String buscaPorCodigo_GetCodigo() {
-        System.out.print("Codigo: ");
-        String input = console.nextLine();
-        return input.length() > 0 ? input.trim() : "";
+    if (curso != null) {
+      System.out.println("Descrição: " + curso.getDescricao());
+      System.out.println("Estado: " + (curso.getEstado() == 0 ? "Inscrições abertas" : "Inscrições encerradas"));
     }
 
-    public void mostraCurso(Curso c) {
-        if (c != null) {
-            // Buscar nome do autor
-            String autorNome = "Desconhecido";
-            try {
-                CRUD_Usuario.ArquivoUsuario arqUsuarios = new CRUD_Usuario.ArquivoUsuario();
-                CRUD_Usuario.Usuario u = arqUsuarios.read(c.getIdUsuario());
-                if (u != null) {
-                    autorNome = u.getNome();
-                }
-            } catch (Exception e) {
-                // Ignorar erro
-            }
-            System.out.println("\nCódigo: " + c.getCodigo());
-            System.out.println("Curso: " + c.getNome());
-            System.out.println("Autor: " + autorNome);
-            System.out.println("Descrição: " + c.getDescricao());
-            System.out.println("Data: " + c.getDataInicio());
-        } else {
-            System.out.println("Curso não encontrado.");
-        }
-    }
+    System.out.println("\n(E) Cancelar minha inscrição no curso"); // Atualizado com o texto do roteiro
+    System.out.println("(R) Retornar ao menu anterior");
+    System.out.print("\nOpção: ");
+
+    String input = new java.util.Scanner(System.in).nextLine();
+    return input.length() > 0 ? Character.toUpperCase(input.charAt(0)) : ' ';
+  }
+
+  public String buscaPorCodigo_GetCodigo() {
+    System.out.println("\nEntrePares 1.0");
+    System.out.println("--------------");
+    System.out.println("> Início > Minhas inscrições > Buscar por código");
+    System.out.print("Código do curso: ");
+    return new java.util.Scanner(System.in).nextLine();
+  }
+
+  public void mostraCurso(Curso curso) {
+    System.out.println("\nEntrePares 1.0");
+    System.out.println("--------------");
+    System.out.println("> Início > Minhas inscrições >" + curso.getNome());
+    System.out.println("\nDetalhes do Curso:");
+    System.out.println("Nome: " + curso.getNome());
+    System.out.println("Descrição: " + curso.getDescricao());
+    System.out.println("Estado: " + (curso.getEstado() == 0 ? "Inscrições abertas" : "Inscrições encerradas"));
+  }
+
+  public int menuOpcoes() {
+    System.out.println("\nEntrePares 1.0");
+    System.out.println("--------------");
+    System.out.println("> Início > Minhas inscrições");
+    System.out.println("\n(A) Fazer minha inscrição no curso");
+    System.out.println("(C) Cancelar minha inscrição no curso");
+    System.out.println("(R) Retornar ao menu anterior");
+    System.out.print("\nOpção: ");
+    String input = new java.util.Scanner(System.in).nextLine();
+    return input.length() > 0 ? Character.toUpperCase(input.charAt(0)) : ' ';
+  }
 }

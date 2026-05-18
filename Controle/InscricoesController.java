@@ -31,7 +31,8 @@ public class InscricoesController {
             if (curso != null && (curso.getEstado() == 0 || curso.getEstado() == 1)) {
                 count++;
                 String estadoStr = curso.getEstado() == 0 ? "Inscrições abertas" : "Inscrições encerradas";
-                System.out.println("(" + count + ") " + c.getNomeCurso() + " - " + c.getDataInscricao() + " (" + estadoStr + ")");
+                System.out.println(
+                        "(" + count + ") " + c.getNomeCurso() + " - " + c.getDataInscricao() + " (" + estadoStr + ")");
             }
         }
         if (count == 0) {
@@ -76,7 +77,8 @@ public class InscricoesController {
                     RelacionamentoCursoUsuario c = inscricoesAtivas.get(i);
                     CRUD_Curso.Curso curso = arqCursos.read(c.getIdCurso());
                     String estadoStr = curso.getEstado() == 0 ? "Inscrições abertas" : "Inscrições encerradas";
-                    System.out.println("(" + (i + 1) + ") " + c.getNomeCurso() + " - " + c.getDataInscricao() + " (" + estadoStr + ")");
+                    System.out.println("(" + (i + 1) + ") " + c.getNomeCurso() + " - " + c.getDataInscricao() + " ("
+                            + estadoStr + ")");
                 }
             }
 
@@ -107,16 +109,16 @@ public class InscricoesController {
                         String codigo = visao.buscaPorCodigo_GetCodigo();
                         CRUD_Curso.Curso curso = arqCursos.read(codigo);
                         if (curso != null) {
-                            visao.mostraCurso(curso);
+                            menuDetalhesCurso(curso, arqCursos, idUsuario);
                         } else {
                             System.out.println("Curso não encontrado.");
                         }
                     } else if (opcao == 'B') {
-                        //String palavrasChave = visao.buscaPorPalavrasChave_GetPalavrasChave();
-                        // Implementar busca por palavras-chave se necessário
+                        // String palavrasChave = visao.buscaPorPalavrasChave_GetPalavrasChave();
+                        // Implementar busca por palavras-chave no futuro
                         System.out.println("Busca por palavras-chave - não implementado ainda. Apenas no tp3");
                     } else if (opcao == 'C') {
-                        menuListarCursosPaginado(arqCursos);
+                        menuListarCursosPaginado(arqCursos, idUsuario);
                     } else if (opcao != 'R') {
                         System.out.println("Opção inválida!");
                     }
@@ -127,42 +129,29 @@ public class InscricoesController {
         } while (opcao != 'R');
     }
 
-    private void menuInscricoesDetalhes(RelacionamentoCursoUsuario c,
-            VisaoInscricoes visao) throws Exception {
+    private void menuInscricoesDetalhes(RelacionamentoCursoUsuario c, VisaoInscricoes visao) throws Exception {
         char op;
         do {
-            // Mostrar detalhes da inscrição
-            System.out.println("\nDetalhes da Inscrição:");
-            System.out.println("Curso: " + c.getNomeCurso());
-            System.out.println("Data de Inscrição: " + c.getDataInscricao());
-            // Talvez mostrar mais detalhes do curso
             CRUD_Curso.ArquivoCurso arqCurso = new CRUD_Curso.ArquivoCurso();
             CRUD_Curso.Curso curso = arqCurso.read(c.getIdCurso());
-            if (curso != null) {
-                System.out.println("Descrição: " + curso.getDescricao());
-                System.out.println("Estado: " + (curso.getEstado() == 0 ? "Inscrições abertas" : "Inscrições encerradas"));
-            }
 
-            System.out.println("\n(E) Cancelar inscrição");
-            System.out.println("(R) Retornar");
-            System.out.print("Opção: ");
-            String input = new java.util.Scanner(System.in).nextLine();
-            op = input.length() > 0 ? Character.toUpperCase(input.charAt(0)) : ' ';
+            op = visao.menuDetalhes(c, curso);
+
             switch (op) {
                 case 'E':
-                    // Cancelar inscrição - deletar o relacionamento
                     crud.delete(c.getIdUsuario(), c.getIdCurso());
-                    System.out.println("Inscrição cancelada.");
-                    return; // sair do menu de detalhes
+                    System.out.println("Inscrição cancelada com sucesso.");
+                    op = 'R';
+                    break;
                 case 'R':
                     break;
                 default:
-                    System.out.println("Opção inválida!");
+                    break;
             }
         } while (op != 'R');
     }
 
-    private void menuListarCursosPaginado(CRUD_Curso.ArquivoCurso arqCursos) throws Exception {
+    private void menuListarCursosPaginado(CRUD_Curso.ArquivoCurso arqCursos, int idUsuario) throws Exception {
         final int ITENS_POR_PAGINA = 10;
         int paginaAtual = 1;
         int totalCursos = arqCursos.contarTotalCursos();
@@ -170,22 +159,17 @@ public class InscricoesController {
 
         char op;
         do {
-            // Mostrar cabeçalho
             System.out.println("\nEntrePares 1.0");
-            System.out.println("--------------");
             System.out.println("> Início > Minhas inscrições > Lista de cursos");
             System.out.println("\nPágina " + paginaAtual + " de " + Math.max(1, totalPaginas));
 
-            // Carregar cursos da página atual
             ArrayList<CRUD_Curso.Curso> cursos = arqCursos.readCursosPaginados(paginaAtual, ITENS_POR_PAGINA);
 
-            // Mostrar cursos
             for (int i = 0; i < cursos.size(); i++) {
                 CRUD_Curso.Curso c = cursos.get(i);
                 System.out.println("(" + (i + 1) + ") " + c.getNome() + " - " + c.getDataInicio());
             }
 
-            // Mostrar opções de navegação
             System.out.println("\nDigite o número do curso para ver detalhes");
             System.out.println("\n(A) Página anterior");
             System.out.println("(B) Próxima página");
@@ -195,12 +179,11 @@ public class InscricoesController {
             String input = new java.util.Scanner(System.in).nextLine();
             op = input.length() > 0 ? Character.toUpperCase(input.charAt(0)) : ' ';
 
-            // Verificar se é um número (seleção de curso)
             if (Character.isDigit(op)) {
-                int index = op - '1'; // '1' = 0, '2' = 1, etc.
+                int index = op - '1';
                 if (index >= 0 && index < cursos.size()) {
-                    menuDetalhesCurso(cursos.get(index), arqCursos);
-                    op = ' '; // continuar no loop
+                    menuDetalhesCurso(cursos.get(index), arqCursos, idUsuario);
+                    op = ' ';
                 } else {
                     System.out.println("Número inválido!");
                     op = ' ';
@@ -230,7 +213,8 @@ public class InscricoesController {
         } while (op != 'R');
     }
 
-    private void menuDetalhesCurso(CRUD_Curso.Curso curso, CRUD_Curso.ArquivoCurso arqCursos) throws Exception {
+    private void menuDetalhesCurso(CRUD_Curso.Curso curso, CRUD_Curso.ArquivoCurso arqCursos, int idUsuario)
+            throws Exception {
         // Buscar nome do autor
         String autorNome = "Desconhecido";
         try {
@@ -277,8 +261,17 @@ public class InscricoesController {
             switch (op) {
                 case 'A':
                     if (curso.getEstado() == 0) {
-                        // Implementar inscrição - por enquanto apenas mensagem
-                        System.out.println("Funcionalidade de inscrição será implementada em breve.");
+                        String nomeUsuario = "Desconhecido";
+                        try {
+                            CRUD_Usuario.ArquivoUsuario arqUsuarios = new CRUD_Usuario.ArquivoUsuario();
+                            CRUD_Usuario.Usuario u = arqUsuarios.read(idUsuario);
+                            if (u != null) {
+                                nomeUsuario = u.getNome();
+                            }
+                        } catch (Exception e) {
+                            // Ignorar erro
+                        }
+                        criarInscricao(idUsuario, curso.getID(), curso.getNome(), nomeUsuario);
                     } else {
                         System.out.println("Inscrições encerradas para este curso.");
                     }
