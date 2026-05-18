@@ -1,4 +1,4 @@
-# EntrePares 1.0 - TP2: Relacionamento N:N entre Usuários e Cursos
+## TP2: Relacionamento N:N entre Usuários e Cursos
 
 ## Descrição Geral
 

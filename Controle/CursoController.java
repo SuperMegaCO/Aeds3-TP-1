@@ -172,6 +172,12 @@ public class CursoController {
     }
 
     public void deletarCurso(int id) throws Exception {
+        ArquivoRelacionamentoCursoUsuario rcu = new ArquivoRelacionamentoCursoUsuario();
+        ArrayList<RelacionamentoCursoUsuario> inscricoesCurso = rcu.readUsuariosDoCurso(id);
+        for(RelacionamentoCursoUsuario rel : inscricoesCurso) {
+            rcu.delete(rel.getId());
+        }
+
         if (crud.delete(id))
             System.out.println("Curso removido!");
         else

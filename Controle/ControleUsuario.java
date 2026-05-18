@@ -2,9 +2,10 @@ package Controle;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-    import CRUD_Usuario.Usuario;
+import CRUD_Usuario.Usuario;
 import CRUD_Usuario.ArquivoUsuario;
 import Visao.VisaoUsuario.*;
+
 public class ControleUsuario {
     ArquivoUsuario arqUsuarios;
     VisaoUsuario visUsuario = new VisaoUsuario();
@@ -13,6 +14,7 @@ public class ControleUsuario {
     public ControleUsuario() throws Exception {
         arqUsuarios = new ArquivoUsuario();
     }
+
     public int NewUserMenu() {
         System.out.println("\n\nAEDsIII TP1 1:N");
         System.out.println("-------");
@@ -21,15 +23,15 @@ public class ControleUsuario {
 
         try {
             return arqUsuarios.create(tempUser);
-        }
-        catch(Exception e) {
-            
+        } catch (Exception e) {
+
             System.out.println("Erro em salvar o usuario novo.");
             e.printStackTrace();
             return -1;
         }
 
     }
+
     public int Login() {
         LoginInfo logInf;
         Usuario tempUsr = null;
@@ -37,21 +39,21 @@ public class ControleUsuario {
         System.out.println("-------");
         System.out.println("> Inicio > Login");
         do {
-           logInf = visUsuario.Login();
-        try {
-            tempUsr = arqUsuarios.read(logInf.Email);
+            logInf = visUsuario.Login();
+            try {
+                tempUsr = arqUsuarios.read(logInf.Email);
                 if (tempUsr == null) {
                     System.err.println("Usuário não encontrado.");
                 } else if (!tempUsr.getHashSenha().equals(logInf.password)) {
-             System.err.println("Senha incorreta");
-        }
-            } catch(Exception e) {
-            System.out.println("Erro em fazer login.");
-           e.printStackTrace();
+                    System.err.println("Senha incorreta");
+                }
+            } catch (Exception e) {
+                System.out.println("Erro em fazer login.");
+                e.printStackTrace();
                 tempUsr = null;
             }
-        } while(tempUsr == null || !tempUsr.getHashSenha().equals(logInf.password));
-        
+        } while (tempUsr == null || !tempUsr.getHashSenha().equals(logInf.password));
+
         System.out.println("Login feito com sucesso");
         return tempUsr.getId();
     }
@@ -90,8 +92,21 @@ public class ControleUsuario {
                     System.out.println("Não é possivel excluir a conta. Você possui cursos ativos.");
                     return false;
                 } else {
+                    CRUD_RelacionamentoCursoUsuario.ArquivoRelacionamentoCursoUsuario arqRel = new CRUD_RelacionamentoCursoUsuario.ArquivoRelacionamentoCursoUsuario();
+
+                    ArrayList<CRUD_RelacionamentoCursoUsuario.RelacionamentoCursoUsuario> inscricoesUsuario = arqRel
+                            .readCursosDoUsuario(idUsuario);
+                    for (CRUD_RelacionamentoCursoUsuario.RelacionamentoCursoUsuario rel : inscricoesUsuario) {
+                        arqRel.delete(rel.getId());
+                    }
+
                     for (CRUD_Curso.Curso c : cursos) {
-                         arqCursos.delete(c.getId());
+                        ArrayList<CRUD_RelacionamentoCursoUsuario.RelacionamentoCursoUsuario> inscricoesCurso = arqRel
+                                .readUsuariosDoCurso(c.getId());
+                        for (CRUD_RelacionamentoCursoUsuario.RelacionamentoCursoUsuario rel : inscricoesCurso) {
+                            arqRel.delete(rel.getId());
+                        }
+                        arqCursos.delete(c.getId());
                     }
                     arqUsuarios.delete(idUsuario);
                     System.out.println("Conta excluída com sucesso.");
