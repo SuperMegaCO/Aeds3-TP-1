@@ -57,12 +57,15 @@ public class ArquivoRelacionamentoCursoUsuario extends aed3.Arquivo<Relacionamen
 
     public boolean delete(int idUsuario, int idCurso) throws Exception {
         ArrayList<RelacionamentoCursoUsuario> inscricoes = this.readCursosDoUsuario(idUsuario);
+        boolean removido = false;
         for (RelacionamentoCursoUsuario inscricao : inscricoes) {
             if (inscricao.getIdCurso() == idCurso) {
-                return this.delete(inscricao.getId()); // Usa o delete(int id) herdado
+                if (this.delete(inscricao.getId())) {
+                    removido = true;
+                }
             }
         }
-        return false;
+        return removido;
     }
 
     // =========================================================================================
