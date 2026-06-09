@@ -8,7 +8,7 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
 
     HashExtensivel<ParCodigoID> indiceCodigo;
     ArvoreBMais<ParIdUsuarioIdCurso> indiceUsuario;
-
+    ListaInvertida ListaDeCursos = new ListaInvertida(20, ".\\dados\\ListaInvertidaCursos\\dicionario.d.db", ".\\dados\\ListaInvertidaCursos\\blocos.d.db");
     public ArquivoCurso() throws Exception {
         super("Cursos", Curso.class.getConstructor());
 
