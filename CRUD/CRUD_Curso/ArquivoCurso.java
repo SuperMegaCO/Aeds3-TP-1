@@ -1,6 +1,8 @@
 package CRUD_Curso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import aed3.*;
 
@@ -8,7 +10,10 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
 
     HashExtensivel<ParCodigoID> indiceCodigo;
     ArvoreBMais<ParIdUsuarioIdCurso> indiceUsuario;
-    ListaInvertida ListaDeCursos = new ListaInvertida(20, ".\\dados\\ListaInvertidaCursos\\dicionario.d.db", ".\\dados\\ListaInvertidaCursos\\blocos.d.db");
+    ListaInvertida ListaDeCursos = new ListaInvertida(20, ".\\dados\\ListaInvertidaCursos\\dicionario.d.db",
+            ".\\dados\\ListaInvertidaCursos\\blocos.d.db");
+    ListaInvertidoHelper helper = new ListaInvertidoHelper();
+
     public ArquivoCurso() throws Exception {
         super("Cursos", Curso.class.getConstructor());
 
@@ -57,6 +62,7 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
 
         // índice por usuário (1:N)
         indiceUsuario.create(new ParIdUsuarioIdCurso(c.getIdUsuario(), c.getNome(), id));
+        helper.operacaoCompleta(ListaDeCursos, id, c.getNome());
         return id;
     }
 
@@ -65,13 +71,13 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
     // ========================
     public Curso read(String codigo) throws Exception {
         String codigoTrimmed = codigo.trim();
-        
+
         // Tenta buscar via índice primeiro
         ParCodigoID pci = indiceCodigo.read(ParCodigoID.hash(codigoTrimmed));
         if (pci != null) {
             return read(pci.getId());
         }
-        
+
         // Fallback: busca linear se o índice não encontrar
         // Isso garante que funciona mesmo se o índice estiver vazio/inconsistente
         int id = 1;
@@ -85,7 +91,7 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
             }
             id++;
         }
-        
+
         return null;
     }
 
@@ -119,6 +125,9 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
                 // remove índice usuário
                 indiceUsuario.delete(
                         new ParIdUsuarioIdCurso(c.getIdUsuario(), c.getNome(), id));
+                helper.operacaoRemover(ListaDeCursos, c.getNome(), id);
+
+                ListaDeCursos.decrementaEntidades();
 
                 return true;
             }
@@ -152,6 +161,12 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
                 indiceUsuario.create(
                         new ParIdUsuarioIdCurso(novo.getIdUsuario(), novo.getNome(), novo.getId()));
             }
+            if (!novo.getNome().equals(antigo.getNome())) {
+
+                helper.operacaoRemover(ListaDeCursos, antigo.getNome(), antigo.getId());
+
+                helper.operacaoCompleta(ListaDeCursos, novo.getId(), novo.getNome());
+            }
 
             return true;
         }
@@ -180,19 +195,83 @@ public class ArquivoCurso extends aed3.Arquivo<Curso> {
     }
 
     // ========================
+    // BUSCA DO USUARIO
+    // ========================
+     public ArrayList<Curso> pesquisa(String query) throws Exception {
+        ArrayList<String> cleanQuery = helper.palavraCleaner(query);
+        int total = ListaDeCursos.numeroEntidades();
+        HashMap<Integer, Float> cursoValues = new HashMap<>();
+        
+        for (String word : cleanQuery) {
+            ElementoLista[] elementos = ListaDeCursos.read(word);
+            
+            if (elementos == null || elementos.length == 0) {
+                continue;
+            }
+            
+            float IDF = (float) Math.log10((float) total / elementos.length) + 1f;
+            
+            for (ElementoLista e : elementos) {
+                int cursoId = e.getId();
+                float tf = e.getFrequencia();
+                float tfIdf = tf * IDF;
+                
+                if (cursoValues.containsKey(cursoId)) {
+                    float pointsValue = cursoValues.get(cursoId);
+                    cursoValues.put(cursoId, pointsValue + tfIdf);
+                } else {
+                    cursoValues.put(cursoId, tfIdf);
+                }
+            }
+        }
+        
+        ArrayList<Map.Entry<Integer, Float>> pointsList = new ArrayList<>(cursoValues.entrySet());
+        
+        // 4. Sort from highest score to lowest score (b, a)
+        pointsList.sort((a, b) -> {
+            return Float.compare(b.getValue(), a.getValue());
+        });
+        ArrayList<Curso> cursosOrdenados = new ArrayList<>();
+        for (Map.Entry<Integer,Float> cursoEntry : pointsList) {
+            int cId = cursoEntry.getKey();
+            Curso curso = super.read(cId);
+    
+            if (curso != null) {
+                cursosOrdenados.add(curso);
+            }
+        }
+        return cursosOrdenados;
+    }
+    // ========================
+    // REPOSTA PAGINADA
+    // ========================
+    public ArrayList<Curso> resultadosPesquisaPaginados(int pagina, int itensPorPagina, String query) throws Exception {
+        ArrayList<Curso> todosCursos = pesquisa(query);
+        ArrayList<Curso> paginaCursos = new ArrayList<>();
+
+        int inicio = (pagina - 1) * itensPorPagina;
+        int fim = Math.min(inicio + itensPorPagina, todosCursos.size());
+
+        for (int i = inicio; i < fim; i++) {
+            paginaCursos.add(todosCursos.get(i));
+        }
+
+        return paginaCursos;
+    }
+    // ========================
     // READ CURSOS PAGINADOS
     // ========================
     public ArrayList<Curso> readCursosPaginados(int pagina, int itensPorPagina) throws Exception {
         ArrayList<Curso> todosCursos = readAllCursosOrdenadosPorData();
         ArrayList<Curso> paginaCursos = new ArrayList<>();
-        
+
         int inicio = (pagina - 1) * itensPorPagina;
         int fim = Math.min(inicio + itensPorPagina, todosCursos.size());
-        
+
         for (int i = inicio; i < fim; i++) {
             paginaCursos.add(todosCursos.get(i));
         }
-        
+
         return paginaCursos;
     }
 

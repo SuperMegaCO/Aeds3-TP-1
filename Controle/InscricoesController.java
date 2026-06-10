@@ -112,9 +112,8 @@ public class InscricoesController {
                             System.out.println("Curso não encontrado.");
                         }
                     } else if (opcao == 'B') {
-                        //String palavrasChave = visao.buscaPorPalavrasChave_GetPalavrasChave();
-                        // Implementar busca por palavras-chave se necessário
-                        System.out.println("Busca por palavras-chave - não implementado ainda. Apenas no tp3");
+                        String palavrasChave = visao.buscaPorPalavrasChaves();
+                        menuListarCursosPaginadoBusca(arqCursos, idUsuario, palavrasChave);
                     } else if (opcao == 'C') {
                         menuListarCursosPaginado(arqCursos, idUsuario);
                     } else if (opcao != 'R') {
@@ -217,7 +216,73 @@ public class InscricoesController {
             }
         } while (op != 'R');
     }
+private void menuListarCursosPaginadoBusca(CRUD_Curso.ArquivoCurso arqCursos, int idUsuario, String query) throws Exception {
+        final int ITENS_POR_PAGINA = 10;
+        int paginaAtual = 1;
+        int totalCursos = arqCursos.contarTotalCursos();
+        int totalPaginas = (int) Math.ceil((double) totalCursos / ITENS_POR_PAGINA);
 
+        char op;
+        do {
+            // Mostrar cabeçalho
+            System.out.println("\nEntrePares 1.0");
+            System.out.println("--------------");
+            System.out.println("> Início > Minhas inscrições > Busca de cursos");
+            System.out.println("\nPágina " + paginaAtual + " de " + Math.max(1, totalPaginas));
+
+            // Carregar cursos da página atual
+            ArrayList<CRUD_Curso.Curso> cursos = arqCursos.resultadosPesquisaPaginados(paginaAtual, ITENS_POR_PAGINA, query);
+
+            // Mostrar cursos
+            for (int i = 0; i < cursos.size(); i++) {
+                CRUD_Curso.Curso c = cursos.get(i);
+                System.out.println("(" + (i + 1) + ") " + c.getNome() + " - " + c.getDataInicio());
+            }
+
+            // Mostrar opções de navegação
+            System.out.println("\nDigite o número do curso para ver detalhes");
+            System.out.println("\n(A) Página anterior");
+            System.out.println("(B) Próxima página");
+            System.out.println("(R) Retornar ao menu anterior");
+            System.out.print("Opção: ");
+
+            String input = new java.util.Scanner(System.in).nextLine();
+            op = input.length() > 0 ? Character.toUpperCase(input.charAt(0)) : ' ';
+
+            // Verificar se é um número (seleção de curso)
+            if (Character.isDigit(op)) {
+                int index = op - '1'; // '1' = 0, '2' = 1, etc.
+                if (index >= 0 && index < cursos.size()) {
+                    menuDetalhesCurso(cursos.get(index), arqCursos, idUsuario);
+                    op = ' ';
+                } else {
+                    System.out.println("Número inválido!");
+                    op = ' ';
+                }
+            } else {
+                switch (op) {
+                    case 'A':
+                        if (paginaAtual > 1) {
+                            paginaAtual--;
+                        } else {
+                            System.out.println("Você já está na primeira página.");
+                        }
+                        break;
+                    case 'B':
+                        if (paginaAtual < totalPaginas) {
+                            paginaAtual++;
+                        } else {
+                            System.out.println("Você já está na última página.");
+                        }
+                        break;
+                    case 'R':
+                        break;
+                    default:
+                        System.out.println("Opção inválida!");
+                }
+            }
+        } while (op != 'R');
+    }
     private void menuDetalhesCurso(CRUD_Curso.Curso curso, CRUD_Curso.ArquivoCurso arqCursos, int idUsuario)
             throws Exception {
         // Buscar nome do autor

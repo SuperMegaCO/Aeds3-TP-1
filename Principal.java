@@ -1,3 +1,4 @@
+import java.io.FileInputStream;
 import java.util.Scanner;
 
 import Controle.ControleUsuario;
@@ -7,6 +8,8 @@ import Controle.InscricoesController;
 public class Principal {
 
     public static void main(String[] args) throws Exception {
+        // codigo para usar um arquivo de teste
+       // System.setIn(new FileInputStream("test_input.txt"));
 
         Scanner console;
         int currentUserId = -1;

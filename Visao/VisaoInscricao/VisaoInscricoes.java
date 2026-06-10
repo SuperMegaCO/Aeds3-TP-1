@@ -35,6 +35,13 @@ public class VisaoInscricoes {
     System.out.print("Código do curso: ");
     return new java.util.Scanner(System.in).nextLine();
   }
+    public String buscaPorPalavrasChaves() {
+    System.out.println("\nEntrePares 1.0");
+    System.out.println("--------------");
+    System.out.println("> Início > Minhas inscrições > Buscar por palavras chaves");
+    System.out.print("Palavras chaves de pesquisa: ");
+    return new java.util.Scanner(System.in).nextLine();
+  }
 
   public void mostraCurso(Curso curso) {
     System.out.println("\nEntrePares 1.0");
