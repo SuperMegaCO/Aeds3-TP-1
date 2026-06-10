@@ -216,18 +216,31 @@ Principais Funcionalidades Implementadas
 ----------------------------------------------------------------------------------------
 
 Figura 1 – Tela Inicial
+
 ![Tela Inicial](./Imagens/TelaInicial.png)
+
 Figura 2 – Menu Principal
+
 ![Menu Principal](./Imagens/MenuPrincipal.png)
+
 Figura 3 – Meus Cursos
+
 ![Meus Cursos](./Imagens/MeusCursos.png)
+
 Figura 4 – Detalhes de Curso
+
 ![Detalhes](./Imagens/Detalhes.png)
+
 Figura 5 – Minhas Inscrições
+
 ![Inscricoes](./Imagens/Inscricoes.png)
+
 Figura 6 – Buscar curso por palavras-chave
+
 ![Palavras Chave](./Imagens/PalvrasChave.png)
+
 Figura 7 – Gerenciar inscritos no curso
+
 ![Inscritos](./Imagens/Inscritos.png)
 
 Classes Desenvolvidas
