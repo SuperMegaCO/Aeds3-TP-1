@@ -1,8 +1,8 @@
-## TP2: Relacionamento N:N entre Usuários e Cursos
+## TP3: ÍNDICE INVERTIDO
 
 ## Descrição Geral
 
-Neste trabalho prático, evoluímos o sistema desenvolvido no TP1 para lidar com **relacionamentos do tipo N:N** entre entidades, mais especificamente entre **Usuários** e **Cursos**.
+Neste trabalho prático, evoluímos o sistema desenvolvido no TP2 para lidar com busca utilizando índice invertido
 
 Nosso sistema é capaz de:
 
@@ -12,6 +12,7 @@ Nosso sistema é capaz de:
   - Quais usuários estão inscritos em determinado curso.
   - Em quais cursos um determinado usuário está inscrito.
 - Garantir **consistência dos dados**, permitindo gerenciamento de inscrições, cancelamentos e estados de cursos.
+- O índice invertido nos permite fazer buscas por entidades a partir de seus termos (palavras). Para isso, a gente precisa criar uma lista de IDs para cada termo indexado
 
 A modelagem foi orientada a objetos e o projeto foi modularizado para facilitar testes, manutenção e evolução.
 
@@ -144,12 +145,9 @@ A razão pela qual criamos duas estruturas é que as estruturas de dados (como �
 
 ## CHECKLIST?
 
-- [x] Há um CRUD da entidade de associação CursoUsuario (que estende a classe ArquivoIndexado, acrescentando Tabelas Hash Extensíveis e Árvores B+ como índices diretos e indiretos conforme necessidade) que funciona corretamente? **SIM**
-- [x] A visão de inscrições está corretamente implementada e permite consultas aos cursos em que um usuário está inscrito? **SIM**
-- [x] A visão de cursos funciona corretamente e permite a gestão dos usuários inscritos em um curso? **SIM**
-- [x] Há uma visualização dos cursos de outras pessoas por meio de um código NanoID? **SIM**
-- [x] A integridade do relacionamento entre cursos e usuários está mantida em todas as operações? **SIM**
-- [x] O trabalho compila corretamente? **SIM**
-- [x] O trabalho está completo e funcionando sem erros de execução? **SIM**
-- [x] O trabalho é original e não a cópia de um trabalho de outro grupo? **SIM**
+- [x] O índice invertido com os termos dos nomes dos cursos foi criado usando a classe ListaInvertida? *SIM*
+- [x] É possível buscar cursos por palavras no menu de inscrição? *SIM*
+- [x] O trabalho compila corretamente? *SIM*
+- [x] O trabalho está completo e funcionando sem erros de execução? *SIM*
+- [x] O trabalho é original e não a cópia de um trabalho de outro grupo? *SIM*
 ---
